@@ -10,23 +10,19 @@ This application requires the following API keys which can be modified via the p
 1. [Discord](https://discordapp.com/developers/applications/me)
 2. [Cleverbot](https://www.cleverbot.com/api/)
 
-NPM dependencies include:
+## NPM dependencies
 
-1. discord.js
-	* [Discord.js](https://github.com/hydrabolt/discord.js)
-2. cleverbot-node
-	* [Cleverbot](https://github.com/dtesler/node-cleverbot)
-3. cron
-	* [Cron](https://github.com/kelektiv/node-cron)
+1. [discord.js](https://github.com/hydrabolt/discord.js)
+2. [cleverbot](https://github.com/dtesler/node-cleverbot)
+3. [cron](https://github.com/kelektiv/node-cron)
 
-The following URLs might be useful for development:
+## Development
+These items may be useful during development
 
-1. [Discord.js Guide](https://discord.js.org/#/docs/main/stable/general/welcome)
-	* Discord.js documentation
-2. [Heroku](https://www.heroku.com)
-	* free Node.js hosting services
+1. [Discord.js documentation](https://discord.js.org/#/docs/main/stable/general/welcome)
+2. [free Node.js hosting services](https://www.heroku.com)
 
-
+## Tips for myself later when I forget
 To keep from publishing the private.json file you can use
 
 `git update-index --assume-unchanged FILE_NAME`
