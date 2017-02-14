@@ -1,10 +1,12 @@
 const Discord = require('discord.js');
-const Cleverbot = require('cleverbot-node');
 const CronJob = require('cron').CronJob;
+const http = require('http');
+const querystring = require('querystring');
 const config = require('./config.json');
 
 const client = new Discord.Client();
-const cleverbot = new Cleverbot;
+
+var cleverbotConversationToken;
 
 client.on('ready', () => { //display message to the console when up and running
 	console.log('I am ready!');
@@ -28,11 +30,35 @@ client.on('message', message => { //Handle messages directed to bot
 client.on('guildMemberAdd', m =>  m.guild.defaultChannel.sendMessage(`Welcome to ${m.guild.name} ${m.user.username}!!!`)); //Message to display when adding a member
 
 function askCleverbot(message){
-	Cleverbot.prepare(function prepareCleverbot(){
-		cleverbot.write(message.cleanContent.trim(), function askCleverbot(response) {
-			message.reply(response.message);
+	var queryString = {
+		key: config.Cleverbot.APIKey,
+		input: message.cleanContent.trim(),
+		cs: cleverbotConversationToken
+	}
+	var options = {
+		host: 'www.cleverbot.com',
+		path: '/getreply?' + querystring.stringify(queryString),
+		port: '80',
+		method: 'GET'
+	}
+	http.get(options, (res) => {
+		let rawData = '';
+		//concatenate large replies that have been split into packets
+		res.on('data', (chunk) => rawData += chunk);
+		//parse the message on end
+		res.on('end', () => {
+			try {
+				let parsedData = JSON.parse(rawData);
+				cleverbotConversationToken = parsedData.conversation_id;
+				message.reply(parsedData.output);
+			} catch (e) {
+				message.reply('I am broken!!?!@`~~##');
+				console.log(e.message);
+			}
 		});
-	});
+}).on('error', (e) => {
+	console.log(`Got error: ${e.message}`);
+});
 }
 
 function choose(message) {
@@ -57,9 +83,9 @@ function showMe(message) {
 }
 
 function getRandomInt(min, max) {
-  min = Math.ceil(min);
-  max = Math.floor(max);
-  return Math.floor(Math.random() * (max - min)) + min;
+	min = Math.ceil(min);
+	max = Math.floor(max);
+	return Math.floor(Math.random() * (max - min)) + min;
 }
 
 new CronJob({ //A job that changes the game the bot is playing periodically
@@ -70,9 +96,6 @@ new CronJob({ //A job that changes the game the bot is playing periodically
 	},
 	start: config.BotIsPlaying.StartOnLoad
 });
-
-//configure the cleverbot api key
-cleverbot.configure({"botapi":config.Cleverbot.APIKey});
 
 //Login and start the bot
 client.login(config.Discord.Token);
