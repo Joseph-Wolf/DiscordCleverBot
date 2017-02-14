@@ -5,30 +5,26 @@ It runs using Node.js
 	`Node Index.js`
 
 ## Tools
-This application requires the following API keys which can be modified via the config.json:
+This application requires the following API keys which can be modified via the private.json:
 
-1. Discord
-2. Cleverbot
+1. [Discord](https://discordapp.com/developers/applications/me)
+2. [Cleverbot](https://www.cleverbot.com/api/)
 
 NPM dependencies include:
 
 1. discord.js
-		* [Discord.js](https://github.com/hydrabolt/discord.js)
+	* [Discord.js](https://github.com/hydrabolt/discord.js)
 2. cleverbot-node
-		* [Cleverbot](https://github.com/dtesler/node-cleverbot)
+	* [Cleverbot](https://github.com/dtesler/node-cleverbot)
 3. cron
-		* [Cron](https://github.com/kelektiv/node-cron)
+	* [Cron](https://github.com/kelektiv/node-cron)
 
 The following URLs might be useful for development:
 
-1. [Discord Applications](https://discordapp.com/developers/applications/me)
-		* Discord apps
-2. [Cleverbot API](https://www.cleverbot.com/api/)
-		* Cleverbot account
-3. [Discord.js Guide](https://discord.js.org/#/docs/main/stable/general/welcome)
-		* Discord.js documentation
-4. [Heroku](https://www.heroku.com)
-		* free Node.js hosting services
+1. [Discord.js Guide](https://discord.js.org/#/docs/main/stable/general/welcome)
+	* Discord.js documentation
+2. [Heroku](https://www.heroku.com)
+	* free Node.js hosting services
 
 
 To keep from publishing the private.json file you can use
