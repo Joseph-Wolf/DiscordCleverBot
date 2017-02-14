@@ -24,3 +24,11 @@ The following URLs might be useful for development:
 		a. Discord.js documentation
 	4. https://www.openshift.com/
 		a. free Node.js hosting services
+
+
+To keep from publishing the private.json file you can use
+git update-index --assume-unchanged FILE_NAME
+then to publish it again use:
+git update-index --no-assume-unchanged FILE_NAME
+
+This will keep your secrets safe!
