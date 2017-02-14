@@ -5,10 +5,9 @@
   "main": "index.js",
   "author": "Joseph Wolf",
   "dependencies": {
+    "cleverbot": "^1.0.1",
     "cron": "1.2.1",
-    "discord.js": "^11.0.0",
-    "http": "0.0.0",
-    "querystring": "^0.2.0"
+    "discord.js": "^11.0.0"
   },
   "engines": {
     "node": "6.9.5"
