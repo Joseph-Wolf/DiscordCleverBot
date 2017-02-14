@@ -21,6 +21,7 @@ These items may be useful during development
 
 1. [Discord.js documentation](https://discord.js.org/#/docs/main/stable/general/welcome)
 2. [free Node.js hosting services](https://www.heroku.com)
+	* The Prodfile is only used for Heroku
 
 ## Tips for myself later when I forget
 To keep from publishing the private.json file you can use
