@@ -2,7 +2,7 @@
   "name": "discord-bot-mirai",
   "version": "1.0.0",
   "description": "a bot for discord that can talk to cleverbot and do other things",
-  "main": "Index.js",
+  "main": "index.js",
   "author": "Joseph Wolf",
   "dependencies": {
     "cleverbot-node": "^0.2.7",
