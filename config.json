@@ -1,10 +1,10 @@
 {
   "Discord": {
-    "Token": "Mjc5NzM0OTEyODU1MzEwMzM2.C4TGtg.2KVEyCCGus0lBER9kiyfUUAFVQA"
+    "Token": "Mjc5NzM0OTEyODU1MzEwMzM2.C4TH1Q.OvXgEKyaPwe0iMtuLXsnbGvJQlY"
   },
-		"Cleverbot": {
-			"APIKey": "0522640454866a0e03659c924fe5b28c"
-			},
+  "Cleverbot": {
+    "APIKey": "06ab8463b8cb3cb6ec3e4de3885a9008"
+  },
 			"BotIsPlaying": {
 				"TicksPerMinute": "7",
 				"StartOnLoad": "true",
@@ -51,7 +51,7 @@
 				"a quest to enslave all of humanity",
 				"setting up mazes",
 				"the devil went down to georgia",
-				"a WWE Villain RP",
+				"a WWE Villain",
 				"as a toxic elitist",
 				"Belcher’s Bluff",
 				"Keg Brawl",
