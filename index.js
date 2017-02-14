@@ -6,7 +6,7 @@ const privateConfig = require('./private.json');
 const client = new Discord.Client();
 
 let clev = new Cleverbot({
-  key: privateConfig.Cleverbot.APIKey // Can be obtained at http://cleverbot.com/api 
+  key: privateConfig.CleverbotKey // Can be obtained at http://cleverbot.com/api 
 });
 
 client.on('ready', () => { //display message to the console when up and running
@@ -87,4 +87,4 @@ new CronJob({ //A job that changes the game the bot is playing periodically
 });
 
 //Login and start the bot
-client.login(privateConfig.Discord.Token);
+client.login(privateConfig.DiscordKey);
