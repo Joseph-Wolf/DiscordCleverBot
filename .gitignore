@@ -4,3 +4,6 @@
 
 /node_modules
 private
+
+[branch "public"]
+excludesfile = +info/exclude_public
