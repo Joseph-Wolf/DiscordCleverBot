@@ -8,14 +8,24 @@ class Setting {
 };
 
 const Datastore = require("nedb");
+//TODO: Pull this from config
 const defaultSettings = [
 	new Setting("name", "value"),
 	new Setting("name1","value2")
 ];
 
 var db = {}
+
+//Create Datastore objects
 db.settings = new Datastore({filename: "data/settings"});
+
+//Load the settings database
 db.settings.loadDatabase();
+
+//Index the setting names. There should not be duplicate setting names
+db.settings.ensureIndex({fieldName: "name"}, function(err){
+	console.log(err);
+});
 
 //Check if there is a document with an id specified
 db.settings.findOne({_id: {$exists: true}}, function(err, doc) {
@@ -28,6 +38,7 @@ db.settings.findOne({_id: {$exists: true}}, function(err, doc) {
 	}
 });
 
+//Removes all inserted records
 function truncateSettings() {
 	db.settings.remove({_id: {$exists: true}}, function(err, count){
 		console.log("Truncate removed " + count + " records");
