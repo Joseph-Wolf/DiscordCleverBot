@@ -8,9 +8,16 @@
     "cleverbot": "^1.0.1",
     "cron": "1.2.1",
     "discord.js": "^11.0.0",
-    "http": "0.0.0"
+    "http": "0.0.0",
+    "nedb": "^1.8.0"
   },
   "engines": {
     "node": "6.9.5"
+  },
+  "devDependencies": {
+    "qunit": "^1.0.0"
+  },
+  "scripts": {
+    "test": "node test/run.js"
   }
 }

@@ -1,4 +1,6 @@
+const data = require("util/api/data.js");
+
 QUnit.module("data");
-QUnit.test( "hello test", function( assert ) {
-  assert.ok( 1 == "1", "Passed!" );
+test("exists", function (assert) {
+    assert.notOk(data.truncateSettings, "data is ok");
 });
