@@ -9,15 +9,19 @@
     "cron": "1.2.1",
     "discord.js": "^11.0.0",
     "http": "0.0.0",
-    "nedb": "^1.8.0"
+    "is-invalid-path": "^0.1.0",
+    "nedb": "^1.8.0",
+    "path": "^0.12.7"
   },
   "engines": {
     "node": "6.9.5"
   },
   "devDependencies": {
-    "qunit": "^1.0.0"
+    "fs": "0.0.1-security",
+    "mocha": "^3.5.0",
+    "rimraf": "^2.6.1"
   },
   "scripts": {
-    "test": "node test/run.js"
+    "test": "mocha"
   }
 }
