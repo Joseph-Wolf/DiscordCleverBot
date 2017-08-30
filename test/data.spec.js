@@ -74,6 +74,6 @@ describe('Data', function() {
 
 after(function() {
   if (fs.existsSync(tmpDataPath)){
-    //rimraf.sync(tmpDataPath);
+    rimraf.sync(tmpDataPath);
   }
 });
