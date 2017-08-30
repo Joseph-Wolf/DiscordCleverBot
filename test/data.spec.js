@@ -5,11 +5,15 @@ const path = require('path');
 var data = require('../src/db/data.js');
 var tmpDataPath = path.join('test','tmp');
 
-function generateDataFilePath(){
+function generateString(){
   var max = 999999999;
   var min = 1;
   var random = Math.floor(Math.random() * (max - min + 1)) + min;
-  return path.join(tmpDataPath, random.toString());
+  return random.toString();
+}
+
+function generateDataFilePath(){
+  return path.join(tmpDataPath, generateString());
 }
 
 before(function() {
@@ -52,10 +56,24 @@ describe('Data', function() {
       assert.equal(db.path, path.resolve(tmpPath));
     });
   });
+  describe('insert/get', function(){
+    it('should insert and retrieve a record', function(done){
+      var db = new data(generateDataFilePath());
+      var keyString = generateString();
+      var valueString = generateString();
+      var record = {key: keyString, value: valueString};
+      db.insert(record);
+      db.get({key: record.key}, function(item){
+        assert.equal(item.key, record.key);
+        assert.equal(item.value, record.value);
+        done();
+      });
+    });
+  });
 });
 
 after(function() {
   if (fs.existsSync(tmpDataPath)){
-    rimraf.sync(tmpDataPath);
+    //rimraf.sync(tmpDataPath);
   }
 });

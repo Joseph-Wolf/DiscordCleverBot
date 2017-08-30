@@ -5,11 +5,15 @@ const path = require('path');
 var data = require('../src/db/settings.js');
 var tmpDataPath = path.join('test','tmp');
 
-function generateDataFilePath(){
+function generateString(){
   var max = 999999999;
   var min = 1;
   var random = Math.floor(Math.random() * (max - min + 1)) + min;
-  return path.join(tmpDataPath, random.toString());
+  return random.toString();
+}
+
+function generateDataFilePath(){
+  return path.join(tmpDataPath, generateString());
 }
 
 before(function() {
@@ -28,15 +32,11 @@ describe('Settings', function(){
 			var db = new data();
 			assert.equal(path.basename(db.path), 'settings');
 		});
-		/*
-		
-		it('should set an index', function(){});
-*/
 	});
 });
 
 after(function() {
   if (fs.existsSync(tmpDataPath)){
-    rimraf.sync(tmpDataPath);
+    //rimraf.sync(tmpDataPath);
   }
 });

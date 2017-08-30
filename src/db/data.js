@@ -20,6 +20,25 @@ class Data {
 			self.path = self.db.filename;
 		}
 	}
+
+	insert(data){
+		let self = this;
+		self.db.insert(data, function(err){
+			if(err !== null){
+				throw new Error(err);
+			}
+		});
+	}
+
+	get(data, callback){
+		let self = this;
+		self.db.findOne(data, function(err, doc){
+			if(err !== null){
+				throw new Error(err);
+			}
+			callback(doc);
+		});
+	}
 }
 
 module.exports = Data;
