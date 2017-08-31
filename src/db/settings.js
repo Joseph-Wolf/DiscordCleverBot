@@ -8,15 +8,13 @@ const idFieldName = 'name';
 
 class Settings extends Data {
 	constructor(callback){
-		super(dbName, function(){
-			let self = this;
-			//Index the setting names. There should not be duplicate setting names
-			self.db.ensureIndex({fieldName: idFieldName}, function(err){
-				if(err !== null){
-					throw new Error('Error setting up the Settings DB: ' + err);
-				}
-			});
-			callback();
+		super(dbName, callback);
+		let self = this;
+		//Index the setting names. There should not be duplicate setting names
+		self.db.ensureIndex({fieldName: idFieldName}, function(err){
+			if(err !== null){
+				throw new Error('Error setting up the Settings DB: ' + err);
+			}
 		});
 	}
 }

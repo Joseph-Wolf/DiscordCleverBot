@@ -21,7 +21,7 @@ class Data {
 		}
 	}
 
-	insert(data){
+	set(data){
 		let self = this;
 		self.db.insert(data, function(err){
 			if(err !== null){

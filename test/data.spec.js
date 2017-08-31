@@ -56,13 +56,13 @@ describe('Data', function() {
       assert.equal(db.path, path.resolve(tmpPath));
     });
   });
-  describe('insert/get', function(){
-    it('should insert and retrieve a record', function(done){
+  describe('set/get', function(){
+    it('should set and retrieve a record', function(done){
       var db = new data(generateDataFilePath());
       var keyString = generateString();
       var valueString = generateString();
       var record = {key: keyString, value: valueString};
-      db.insert(record);
+      db.set(record);
       db.get({key: record.key}, function(item){
         assert.equal(item.key, record.key);
         assert.equal(item.value, record.value);
