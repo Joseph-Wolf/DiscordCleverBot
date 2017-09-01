@@ -2,16 +2,12 @@ const assert = require('assert');
 const fs = require('fs');
 const rimraf = require('rimraf');
 const path = require('path');
-const getRandomInt = require('../src/util/getRandomInt.js');
+const getRandomString = require('../src/util/getRandomString.js');
 var data = require('../src/db/settings.js');
 var tmpDataPath = path.join('test','data');
 
-function generateString(){
-  return getRandomInt(1, 999999999).toString();
-}
-
 function generateDataFilePath(){
-  return path.join(tmpDataPath, generateString());
+  return path.join(tmpDataPath, getRandomString());
 }
 
 before(function() {
@@ -27,7 +23,7 @@ describe('Settings', function(){
 	      assert.ok(db);
 	    });
 		it('should name the file properly', function(){
-      var randomName = generateString();
+      var randomName = getRandomString();
       var randomPath = path.join(tmpDataPath, randomName);
 			var db = new data(randomPath);
 			assert.equal(path.basename(db.path), randomName);

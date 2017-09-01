@@ -2,12 +2,11 @@
 
 const getFromURL = require('./util/getFromURL.js');
 
-module.exports = function(message) { 
-	let subject = message.cleanContent.split(/fact[s]? about/i)[1].trim();
+module.exports = function(subject) { 
 	let number = parseInt(subject.match(/[\d]+/));
 	let url;
 	let callback = function(data) {
-		message.reply(data);
+		return data;
 	}
 	if (!Number.isInteger(number)) {
 		number = 'random'
@@ -17,7 +16,7 @@ module.exports = function(message) {
 			url = 'http://catfacts-api.appspot.com/api/facts';
 			callback = function(data) {
 				try { 
-					return message.reply(JSON.parse(data).facts[0]);
+					return JSON.parse(data).facts[0];
 				} catch (e) {
 					console.log(e.message);
 				}
@@ -38,12 +37,12 @@ module.exports = function(message) {
 		} else if (/number/i.test(subject)) {
 			url = 'http://numbersapi.com/' + number + '/math';
 		} else {
-			message.reply('I have facts about cats, years, dates (month/day), numbers, and number trivia.');
+			return 'I have facts about cats, years, dates (month/day), numbers, and number trivia.';
 			return;
 		}
 		getFromURL(url, callback);
 	} catch (e) {
 		console.log(e.message);
-		message.reply('I encountered an error getting a fact for you.');
+		return 'I encountered an error getting a fact for you.';
 	}
 }

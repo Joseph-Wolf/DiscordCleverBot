@@ -17,7 +17,6 @@ const keys = {
 	CleverbotKey: {name: 'CleverbotKey'}
 }
 
-
 //Start Discord
 settingsDb.get(keys.DiscordKey, function(doc){
 	if(doc === null) {
@@ -43,12 +42,45 @@ settingsDb.get(keys.DiscordKey, function(doc){
 		});
 
 		var currency = 'onion';
-		discord.registerMessage(/show me/i, action.showMe);
-		discord.registerMessage(/choose/i, action.choose);
-		discord.registerMessage(/flip a coin/i, action.coinFlip);
-		discord.registerMessage(/fact[s]? about/i, action.getFact);
-		discord.registerMessage(new RegExp('[\\d]+[\\s]+' + currency + '[s]?[\\s]+(to)','i'), usersDb.addCurrency);
-		discord.registerMessage(new RegExp('[\\d]+[\\s]+' + currency + '[s]?[\\s]+(from)', 'i'), usersDb.subtractCurrency);
+		discord.registerMessage(/show me/i, function(message){
+			let trimmedContent = message.cleanContent.split(/show me/i)[1].trim();
+			let response = action.showMe(trimmedContent);
+			message.reply(response);
+		});
+		discord.registerMessage(/choose/i, function(message){
+			let trimmedContent = message.cleanContent.split(/choose/i)[1].trim();
+			let response = action.choose(trimmedContent);
+			message.reply('I choose ' + response);
+		});
+		discord.registerMessage(/flip a coin/i, function(message){
+			let response = action.coinFlip();
+			message.reply(response);
+		});
+		discord.registerMessage(/fact[s]? about/i, function(message){
+			let trimmedContent = message.cleanContent.split(/fact[s]? about/i)[1].trim();
+			let response = action.getFact(trimmedContent);
+			message.reply(response);
+		});
+		discord.registerMessage(new RegExp('[\\d]+[\\s]+' + currency + '[s]?[\\s]+(to)','i'), function(message){
+			let amount = parseInt(message.cleanContent.match(/[\d]+/));
+			let user = message.mentions.users[0];
+			usersDb.addCurrency(amount, user);
+			message.reply('I gave ' + amount + ' to ' + user);
+		});
+		discord.registerMessage(new RegExp('[\\d]+[\\s]+' + currency + '[s]?[\\s]+(from)', 'i'), function(message){
+			let amount = parseInt(message.cleanContent.match(/[\d]+/));
+			let user = message.mentions.users[0];
+			usersDb.subtractCurrency(amount, user);
+			message.reply('I took ' + amount + ' to ' + user);
+		});
+		discord.registerMessage(/(auth|login)[\\S]+[\\s]+cleverbot/i, function(message){
+			cleverbot.authenticateWithPrompt(function(acceptedUser, acceptedKey){
+				let data = keys.CleverbotKey;
+				data.user = acceptedUser;
+				data.value = acceptedKey;
+				settingsDb.set(data);
+			});
+		});
 		//Match all other cases to cleverbot
 		discord.registerMessage(/./i, function(message){
 			cleverbot.ask(message); //need to call it directly due to scoping

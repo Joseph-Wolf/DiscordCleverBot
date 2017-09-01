@@ -2,10 +2,10 @@
 
 const getRandomIntInclusive = require('./util/getRandomIntInclusive.js');
 
-module.exports = function(message) {
+module.exports = function() {
 	if(getRandomIntInclusive(0,1)) {
-		message.reply('heads...');
+		return 'heads...';
 	} else {
-		message.reply('tails...');
+		return 'tails...';
 	}
 }

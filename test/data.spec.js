@@ -2,16 +2,12 @@ const assert = require('assert');
 const fs = require('fs');
 const rimraf = require('rimraf');
 const path = require('path');
-const getRandomInt = require('../src/util/getRandomInt.js');
+const getRandomString = require('../src/util/getRandomString.js');
 var data = require('../src/db/data.js');
 var tmpDataPath = path.join('test','data');
 
-function generateString(){
-  return getRandomInt(1, 999999999).toString();
-}
-
 function generateDataFilePath(){
-  return path.join(tmpDataPath, generateString());
+  return path.join(tmpDataPath, getRandomString());
 }
 
 before(function() {
@@ -57,8 +53,8 @@ describe('Data', function() {
   describe('set/get', function(){
     it('should set and retrieve a record', function(done){
       var db = new data(generateDataFilePath());
-      var keyString = generateString();
-      var valueString = generateString();
+      var keyString = getRandomString();
+      var valueString = getRandomString();
       var record = {key: keyString, value: valueString};
       db.set(record);
       db.get({key: record.key}, function(item){

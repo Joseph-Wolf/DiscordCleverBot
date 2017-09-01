@@ -9,7 +9,7 @@ class cbot{
 		let self = this;
 		self.bot = null;
 		self.valid = false;
-		self.token = getRandomInt(1, 99999990).toString();
+		self.token = getRandomInt(Number.MIN_SAFE_INTEGER, Number.MAX_SAFE_INTEGER).toString();
 		self.isBroken = false;
 	}
 	ask(message){
@@ -53,6 +53,25 @@ class cbot{
 		});
 
 		self.bot.setNick(self.token);
+	}
+	authenticateWithPrompt(callback){
+		let self = this;
+		getConsoleInput('Cleverbot.io User > ', function(user) {
+			getConsoleInput('Cleverbot.io Key > ', function(key) {
+				self.bot = new cleverbot(user, key);
+				self.bot.create(function(err, response){
+					if(err){
+						console.log(err);
+						self.valid = false;
+					} else {
+						callback(user, key);
+						self.valid = true;
+					}
+				});
+
+				self.bot.setNick(self.token);
+			});
+		});
 	}
 }
 
