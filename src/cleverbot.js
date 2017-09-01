@@ -10,24 +10,33 @@ class cbot{
 		self.bot = null;
 		self.valid = false;
 		self.token = getRandomInt(1, 99999990).toString();
+		self.isBroken = false;
 	}
-	ask(message, callback){
+	ask(message){
 		let self = this;
-		if(this.valid){
+		if(self.valid){
 			self.bot.create(function(err, response){
 				if(!err){
-					self.bot.ask(message, function(err, response){
+					self.bot.ask(message.cleanContent.trim(), function(err, response){
+						console.log('here');
+						console.log(err);
 						if(!err){
-							if(response === undefined){
-								response = 'What do you mean?';
+							self.isBroken = false; //Reset broken indicator
+							if(response === undefined){ //Reply might have been missed
+								response = 'What do you mean?'; //Ask for clarification to try again
 							}
-							callback(response);
+						} else {
+							if(!self.isBroken) { //don't want to spam the chat
+								response = 'I am broken... (XuX)';
+							}
+							self.isBroken = true;
 						}
+						message.reply(response);
 					});
 				}
 			});
 		} else {
-			callback('Please set up credentials for Cleverbot feature.');
+			message.reply('Please set up credentials for Cleverbot feature.');
 		}
 	}
 	authenticate(user, key, callback){
@@ -38,8 +47,8 @@ class cbot{
 				console.log(err);
 				self.valid = false;
 			} else {
-				self.valid = true;
 				callback(user, key);
+				self.valid = true;
 			}
 		});
 

@@ -2,7 +2,6 @@
 
 const Datastore = require('nedb');
 const Data = require('./data.js');
-const Setting = require('../class/setting.js');
 const idFieldName = 'name';
 
 class Settings extends Data {

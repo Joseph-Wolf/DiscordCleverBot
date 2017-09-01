@@ -11,7 +11,7 @@ class BotIsPlaying{
 		self.job = new CronJob({ //A job that changes the game the bot is playing periodically
 			cronTime: `*/${intervalInMinutes} * * * *`,
 			onTick: function(){
-				callback(pickOption())
+				callback.user.setGame(self.pickOption());
 			},
 			start: startOnLoad
 		});

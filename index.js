@@ -2,8 +2,10 @@ const discord = require('./src/discordbot.js');
 const cleverbot = require('./src/cleverbot.js');
 const config = require('./config.json');
 const Settings = require('./src/db/settings.js');
+const Users = require('./src/db/users.js');
 const BotIsPlaying = require('./src/botIsPlaying.js');
 const settingsDb = new Settings('data/settings');
+const usersDb = new Users('data/users');
 const action = {
 	choose: require('./src/choose.js'),
 	coinFlip: require('./src/coinFlip.js'),
@@ -25,6 +27,7 @@ settingsDb.get(keys.DiscordKey, function(doc){
 		let data = keys.DiscordKey;
 		data.value = acceptedKey;
 		settingsDb.set(data);
+		let client = discord.client;
 
 		//Start Cleverbot
 		settingsDb.get(keys.CleverbotKey, function(doc){
@@ -39,31 +42,21 @@ settingsDb.get(keys.DiscordKey, function(doc){
 			});
 		});
 
-		let client = discord.client;
-
-		//Register bot actions
-		client.on('message', message => { //Handle messages directed to bot
-			let content = message.cleanContent.trim() //trim any excess spaces and make it a happy string
-			let authorIsNotBot = message.author.id !== client.user.id; //is the author the bot? don't want infinite loops
-			let botIsMentioned = message.mentions.users.has(client.user.id); //is the bot mentioned?
-			if (authorIsNotBot && botIsMentioned) { //send cleaned message to cleverbot
-				if(/show me/i.test(content)) {
-					action.showMe(message);
-				} else if(/choose/i.test(content)) {
-					action.choose(message);
-				} else if(/flip a coin/i.test(content)) {
-					action.coinFlip(message)
-				} else if(/fact[s]? about/i.test(content)) {
-					action.getFact(message);
-				} else {
-					cleverbot.ask(message.cleanContent.trim(), message.reply);
-				}
-			}
+		var currency = 'onion';
+		discord.registerMessage(/show me/i, action.showMe);
+		discord.registerMessage(/choose/i, action.choose);
+		discord.registerMessage(/flip a coin/i, action.coinFlip);
+		discord.registerMessage(/fact[s]? about/i, action.getFact);
+		discord.registerMessage(new RegExp('[\\d]+[\\s]+' + currency + '[s]?[\\s]+(to)','i'), usersDb.addCurrency);
+		discord.registerMessage(new RegExp('[\\d]+[\\s]+' + currency + '[s]?[\\s]+(from)', 'i'), usersDb.subtractCurrency);
+		//Match all other cases to cleverbot
+		discord.registerMessage(/./i, function(message){
+			cleverbot.ask(message); //need to call it directly due to scoping
 		});
 
-		client.on('guildMemberAdd', m =>  m.guild.defaultChannel.sendMessage(`Welcome to ${m.guild.name} ${m.user.username}!!!`)); //Message to display when adding a member
+		discord.welcomeUsers(false);
 
 		//Register new bot is playing
-		new BotIsPlaying(config.BotIsPlaying.TicksPerMinute, config.BotIsPlaying.StartOnLoad, config.BotIsPlaying.Options, client.user.setGame);
+		new BotIsPlaying(config.BotIsPlaying.TicksPerMinute, config.BotIsPlaying.StartOnLoad, config.BotIsPlaying.Options, client);
 	});
 });
