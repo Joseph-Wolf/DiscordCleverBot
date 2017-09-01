@@ -14,8 +14,11 @@ const action = {
 }
 const keys = {
 	DiscordKey: {name: 'DiscordKey'},
-	CleverbotKey: {name: 'CleverbotKey'}
+	CleverbotKey: {name: 'CleverbotKey'},
+	CurrencyName: {name: 'CurrencyName'}
 }
+//TODO: get/set this value
+var CurrencyName = 'onion';
 
 //Start Discord
 settingsDb.get(keys.DiscordKey, function(doc){
@@ -33,15 +36,16 @@ settingsDb.get(keys.DiscordKey, function(doc){
 			if(doc === null) {
 				doc = {user: null, value: null};
 			}
-			cleverbot.authenticate(doc.user, doc.value, function(acceptedUser, acceptedKey){
-				let data = keys.CleverbotKey;
-				data.user = acceptedUser;
-				data.value = acceptedKey;
-				settingsDb.set(data);
+			cleverbot.authenticate(doc.user, doc.value, function(success, acceptedUser, acceptedKey){
+				if(success){
+					let data = keys.CleverbotKey;
+					data.user = acceptedUser;
+					data.value = acceptedKey;
+					settingsDb.set(data);
+				}
 			});
 		});
 
-		var currency = 'onion';
 		discord.registerMessage(/show me/i, function(message){
 			let trimmedContent = message.cleanContent.split(/show me/i)[1].trim();
 			let response = action.showMe(trimmedContent);
@@ -54,32 +58,40 @@ settingsDb.get(keys.DiscordKey, function(doc){
 		});
 		discord.registerMessage(/flip a coin/i, function(message){
 			let response = action.coinFlip();
-			message.reply(response);
+			message.reply(response + '...');
 		});
 		discord.registerMessage(/fact[s]? about/i, function(message){
 			let trimmedContent = message.cleanContent.split(/fact[s]? about/i)[1].trim();
 			let response = action.getFact(trimmedContent);
 			message.reply(response);
 		});
-		discord.registerMessage(new RegExp('[\\d]+[\\s]+' + currency + '[s]?[\\s]+(to)','i'), function(message){
+		discord.registerMessage(new RegExp('[\\d]+[\\s]+' + CurrencyName + '[s]?[\\s]+(to)','i'), function(message){
 			let amount = parseInt(message.cleanContent.match(/[\d]+/));
 			let user = message.mentions.users[0];
 			usersDb.addCurrency(amount, user);
 			message.reply('I gave ' + amount + ' to ' + user);
 		});
-		discord.registerMessage(new RegExp('[\\d]+[\\s]+' + currency + '[s]?[\\s]+(from)', 'i'), function(message){
+		discord.registerMessage(new RegExp('[\\d]+[\\s]+' + CurrencyName + '[s]?[\\s]+(from)', 'i'), function(message){
 			let amount = parseInt(message.cleanContent.match(/[\d]+/));
 			let user = message.mentions.users[0];
 			usersDb.subtractCurrency(amount, user);
 			message.reply('I took ' + amount + ' to ' + user);
 		});
-		discord.registerMessage(/(auth|login)[\\S]+[\\s]+cleverbot/i, function(message){
-			cleverbot.authenticateWithPrompt(function(acceptedUser, acceptedKey){
-				let data = keys.CleverbotKey;
-				data.user = acceptedUser;
-				data.value = acceptedKey;
-				settingsDb.set(data);
+		discord.registerMessage(/(auth|login).+?cleverbot/i, function(message){
+			let user = message.cleanContent.split(/:/)[0].match(/[\S]+$/)[0];
+			let token = message.cleanContent.split(/:/)[1].match(/^[\S]+/)[0];
+			cleverbot.authenticate(user, token, function(success, acceptedUser, acceptedKey){
+				if(success){
+					let data = keys.CleverbotKey;
+					data.user = acceptedUser;
+					data.value = acceptedKey;
+					settingsDb.set(data);
+					message.reply('Success!!');
+				} else {
+					message.reply('Failed to authenticate with provided credentials.\n(auth|login) cleverbot {user}:{token}')
+				}
 			});
+			message.delete().catch(message.reply('I can not delete the message your credentials.\nPlease grant permission or manually remove them for security.'));
 		});
 		//Match all other cases to cleverbot
 		discord.registerMessage(/./i, function(message){

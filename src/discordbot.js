@@ -16,9 +16,9 @@ class discord{
 				if (authorIsNotBot && botIsMentioned) { //send cleaned message to cleverbot
 					for(var item of self.messageRegistrations){ //loop through each of the registered messages
 						if(item.expression.test(content)){ //if the content of the message matches the expression
-					    	item.callback(message); //Execute the callback with the message
-					    	break;
-					    }
+							item.callback(message); //Execute the callback with the message
+							break;
+						}
 					}
 				}
 			});

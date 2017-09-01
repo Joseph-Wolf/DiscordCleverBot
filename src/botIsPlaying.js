@@ -3,7 +3,7 @@
 const CronJob = require('cron').CronJob;
 const getRandomInt = require('./util/getRandomInt.js');
 
-class BotIsPlaying{
+module.exports = class BotIsPlaying{
 	constructor(intervalInMinutes, startOnLoad, playingOptions, callback){
 		let self = this;
 		self.options = playingOptions;
@@ -21,5 +21,3 @@ class BotIsPlaying{
 		return self.options[getRandomInt(0, self.options.length)];
 	}
 }
-
-module.exports = BotIsPlaying;

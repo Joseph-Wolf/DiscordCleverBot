@@ -4,7 +4,7 @@ const Datastore = require('nedb');
 const path = require('path');
 const isInvalidPath = require('is-invalid-path');
 
-class Data {
+module.exports = class Data {
 	constructor(dataPath, callback){
 		let self = this;
 		if(!isInvalidPath(dataPath)) {
@@ -15,6 +15,11 @@ class Data {
 				throw new Error('Can not save data above execution directory');
 			}
 			self.path = normalizedPath;
+
+			//bind the callback to 'this' so it can be modified in its callback
+			if(callback){
+				callback = callback.bind(self);
+			}
 			//Create Datastore
 			self.db = new Datastore({filename: self.path, autoload: true, onload: callback});
 		}
@@ -39,5 +44,3 @@ class Data {
 		});
 	}
 }
-
-module.exports = Data;

@@ -3,7 +3,7 @@
 const Datastore = require('nedb');
 const Data = require('./data.js');
 
-class Users extends Data {
+module.exports = class Users extends Data {
 	constructor(dbPath, callback){
 		super(dbPath);
 	}
@@ -12,5 +12,3 @@ class Users extends Data {
 	subtractCurrency(amount, user){
 	}
 }
-
-module.exports = Users;

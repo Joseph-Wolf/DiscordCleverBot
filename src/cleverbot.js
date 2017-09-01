@@ -1,7 +1,6 @@
 "use strict";
 
 const cleverbot = require("cleverbot.io");
-const getConsoleInput = require('./util/getConsoleInput.js');
 const getRandomInt = require('./util/getRandomInt.js');
 
 class cbot{
@@ -18,8 +17,6 @@ class cbot{
 			self.bot.create(function(err, response){
 				if(!err){
 					self.bot.ask(message.cleanContent.trim(), function(err, response){
-						console.log('here');
-						console.log(err);
 						if(!err){
 							self.isBroken = false; //Reset broken indicator
 							if(response === undefined){ //Reply might have been missed
@@ -43,18 +40,21 @@ class cbot{
 		let self = this;
 		self.bot = new cleverbot(user, key);
 		self.bot.create(function(err, response){
-			if(err){
-				console.log(err);
+			if(err){ //will return false if there was an error
 				self.valid = false;
 			} else {
-				callback(user, key);
 				self.valid = true;
+				self.bot.setNick(self.token); //set the nickname of the session
 			}
+			callback(self.valid, user, key);
 		});
-
-		self.bot.setNick(self.token);
 	}
-	authenticateWithPrompt(callback){
+	/*
+	TODO: move this back to the input.
+	it will require usage of discord messages so it shouldn't be part of cleverbot only.
+	use the authenticate method.
+
+	login(callback){
 		let self = this;
 		getConsoleInput('Cleverbot.io User > ', function(user) {
 			getConsoleInput('Cleverbot.io Key > ', function(key) {
@@ -73,6 +73,7 @@ class cbot{
 			});
 		});
 	}
+	*/
 }
 
 module.exports = new cbot();
