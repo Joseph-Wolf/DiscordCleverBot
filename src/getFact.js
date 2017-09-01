@@ -2,7 +2,7 @@
 
 const getFromURL = require('./util/getFromURL.js');
 
-function getFact(message) { 
+module.exports = function(message) { 
 	let subject = message.cleanContent.split(/fact[s]? about/i)[1].trim();
 	let number = parseInt(subject.match(/[\d]+/));
 	let url;
@@ -47,5 +47,3 @@ function getFact(message) {
 		message.reply('I encountered an error getting a fact for you.');
 	}
 }
-
-module.exports = getFact;

@@ -1,53 +1,49 @@
 "use strict";
 
-const Cleverbot = require('cleverbot');
-const readline = require('readline');
-let rl = readline.createInterface({input: process.stdin, output: process.stdout});
+const cleverbot = require("cleverbot.io");
+const getConsoleInput = require('./util/getConsoleInput.js');
+const getRandomInt = require('./util/getRandomInt.js');
 
 class cbot{
-	constructor(){
+	constructor(user, key){
 		let self = this;
-		self.bot =  null;
-		self.token = null;
+		self.bot = null;
+		self.valid = false;
+		self.token = getRandomInt(1, 99999990).toString();
 	}
-	ask(message){
+	ask(message, callback){
 		let self = this;
-		if(self.token) {
-			self.bot.query(message.cleanContent.trim(), {
-				cs: self.token
-			})
-			.then(function (response) {
-				self.token = response.cs;
-				if(response.output === undefined) { 
-					message.reply('what do you mean?');
-				} else {
-					message.reply(response.output);
+		if(this.valid){
+			self.bot.create(function(err, response){
+				if(!err){
+					self.bot.ask(message, function(err, response){
+						if(!err){
+							if(response === undefined){
+								response = 'What do you mean?';
+							}
+							callback(response);
+						}
+					});
 				}
 			});
 		} else {
-			self.bot.query(message.cleanContent.trim())
-			.then(function (response) {
-				self.token = response.cs;
-				if(response.output === undefined) { 
-					message.reply('what do you mean?');
-				} else {
-					message.reply(response.output);
-				}
-			});
+			callback('Please set up credentials for Cleverbot feature.');
 		}
 	}
-	authenticate(callback){
+	authenticate(user, key, callback){
 		let self = this;
-		rl.question("CleverBot Key > ", function(answer) {
-			try {
-				self.bot =  new Cleverbot({
-				  key: answer // Can be obtained at http://cleverbot.com/api 
-				});
-				callback(answer);
-			} catch(err) {
-				self.authenticate(callback); //Loop until valid
+		self.bot = new cleverbot(user, key);
+		self.bot.create(function(err, response){
+			if(err){
+				console.log(err);
+				self.valid = false;
+			} else {
+				self.valid = true;
+				callback(user, key);
 			}
 		});
+
+		self.bot.setNick(self.token);
 	}
 }
 

@@ -14,10 +14,9 @@ class Data {
 			if(normalizedPath.indexOf(path.resolve('src/..')) === -1) {
 				throw new Error('Can not save data above execution directory');
 			}
+			self.path = normalizedPath;
 			//Create Datastore
-			self.db = new Datastore({filename: normalizedPath, autoload: true, onload: callback});
-			//Set some commonly accessed or tested parameters
-			self.path = self.db.filename;
+			self.db = new Datastore({filename: self.path, autoload: true, onload: callback});
 		}
 	}
 

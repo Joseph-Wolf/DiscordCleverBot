@@ -1,8 +1,7 @@
 "use strict";
 
 const Discord = require('discord.js');
-const readline = require('readline');
-let rl = readline.createInterface({input: process.stdin, output: process.stdout});
+const getConsoleInput = require('./util/getConsoleInput.js');
 
 class discord{
 	constructor(){
@@ -13,15 +12,12 @@ class discord{
 			console.log('I am ready!');
 		});
 	}
-	authenticate(callback){
+	authenticate(value, callback){
 		let self = this;
-		rl.question("Discord Bot Key > ", function(answer) {
-			try {
-				self.client.login(answer);
-				callback(answer);
-			} catch(err) {
-				self.authenticate(callback); //Loop until valid
-			}
+		self.client.login(value).then(callback, function(){
+			getConsoleInput('Discord Bot Key > ', function(answer) {
+				self.authenticate(answer, callback); //Loop until valid
+			});
 		});
 	}
 }

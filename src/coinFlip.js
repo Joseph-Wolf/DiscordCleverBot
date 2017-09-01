@@ -2,12 +2,10 @@
 
 const getRandomIntInclusive = require('./util/getRandomIntInclusive.js');
 
-function coinFlip(message) {
+module.exports = function(message) {
 	if(getRandomIntInclusive(0,1)) {
 		message.reply('heads...');
 	} else {
 		message.reply('tails...');
 	}
 }
-
-module.exports = coinFlip;

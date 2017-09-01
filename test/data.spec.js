@@ -2,14 +2,12 @@ const assert = require('assert');
 const fs = require('fs');
 const rimraf = require('rimraf');
 const path = require('path');
+const getRandomInt = require('../src/util/getRandomInt.js');
 var data = require('../src/db/data.js');
-var tmpDataPath = path.join('test','tmp');
+var tmpDataPath = path.join('test','data');
 
 function generateString(){
-  var max = 999999999;
-  var min = 1;
-  var random = Math.floor(Math.random() * (max - min + 1)) + min;
-  return random.toString();
+  return getRandomInt(1, 999999999).toString();
 }
 
 function generateDataFilePath(){
@@ -31,10 +29,10 @@ describe('Data', function() {
     it('should create a file', function(done){
       var tmpPath = generateDataFilePath();
       var db = new data(tmpPath, function(err){
+        assert.ok(fs.existsSync(tmpPath));
         if (err) {
           done(err);
         } else {
-          assert.ok(fs.existsSync(tmpPath));
           done();
         }
       });
@@ -70,10 +68,4 @@ describe('Data', function() {
       });
     });
   });
-});
-
-after(function() {
-  if (fs.existsSync(tmpDataPath)){
-    rimraf.sync(tmpDataPath);
-  }
 });

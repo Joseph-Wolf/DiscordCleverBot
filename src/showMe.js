@@ -2,7 +2,7 @@
 
 const getRandomInt = require('./util/getRandomInt.js');
 
-function showMe(message) {
+module.exports = function(message) {
 	let desiredCategory = message.cleanContent.split(/show me/i)[1].trim()
 	let randomSizes = [240, 250, 300, 350, 400, 450, 500, 550, 600];
 	let availableCategories = ['abstract', 'animals', 'cats', 'city', 'food', 'nature', 'dogs'];
@@ -16,5 +16,3 @@ function showMe(message) {
 		message.reply('No. I only have pictures of ' + availableCategories.join(', '));
 	}
 }
-
-module.exports = showMe;

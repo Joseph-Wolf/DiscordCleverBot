@@ -2,7 +2,7 @@
 
 const http = require('http');
 
-function getFromURL(url, callback) {
+module.exports = function(url, callback) {
 	http.get(url, (res) => {
 		const statusCode = res.statusCode;
 
@@ -28,4 +28,3 @@ function getFromURL(url, callback) {
 		console.log(`Got error: ${e.message}`);
 	});
 }
-module.exports = getFromURL;
