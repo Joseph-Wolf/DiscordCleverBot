@@ -5,7 +5,7 @@
   "main": "index.js",
   "author": "Joseph Wolf",
   "dependencies": {
-    "cleverbot.io": "git://github.com/CleverbotIO/node-cleverbot.io#8746180",
+    "cleverbot.io": "CleverbotIO/node-cleverbot.io#8746180",
     "cron": "1.2.1",
     "discord.js": "^11.0.0",
     "http": "0.0.0",
