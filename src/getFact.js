@@ -2,21 +2,19 @@
 
 const getFromURL = require('./util/getFromURL.js');
 
-module.exports = function(subject) { 
+module.exports = function(subject, callback) { 
 	let number = parseInt(subject.match(/[\d]+/));
 	let url;
-	let callback = function(data) {
-		return data;
-	}
+	let reply = callback;
 	if (!Number.isInteger(number)) {
 		number = 'random'
 	}
 	try {
 		if(/cat/i.test(subject)) {
-			url = 'http://catfacts-api.appspot.com/api/facts';
-			callback = function(data) {
-				try { 
-					return JSON.parse(data).facts[0];
+			url = 'https://catfact.ninja/fact';
+			reply = function(data) {
+				try { //format the message
+					callback(data.fact);
 				} catch (e) {
 					console.log(e.message);
 				}
@@ -40,9 +38,9 @@ module.exports = function(subject) {
 			return 'I have facts about cats, years, dates (month/day), numbers, and number trivia.';
 			return;
 		}
-		getFromURL(url, callback);
+		getFromURL(url, reply);
 	} catch (e) {
 		console.log(e.message);
-		return 'I encountered an error getting a fact for you.';
+		return 'I encountered an error getting the fact for you.';
 	}
 }

@@ -49,31 +49,6 @@ class cbot{
 			callback(self.valid, user, key);
 		});
 	}
-	/*
-	TODO: move this back to the input.
-	it will require usage of discord messages so it shouldn't be part of cleverbot only.
-	use the authenticate method.
-
-	login(callback){
-		let self = this;
-		getConsoleInput('Cleverbot.io User > ', function(user) {
-			getConsoleInput('Cleverbot.io Key > ', function(key) {
-				self.bot = new cleverbot(user, key);
-				self.bot.create(function(err, response){
-					if(err){
-						console.log(err);
-						self.valid = false;
-					} else {
-						callback(user, key);
-						self.valid = true;
-					}
-				});
-
-				self.bot.setNick(self.token);
-			});
-		});
-	}
-	*/
 }
 
 module.exports = new cbot();

@@ -38,4 +38,10 @@ describe('choose', function(){
 			assert.ok(optionsList.indexOf(choose(commaAndOrSeparatesList)) !== -1);
 		}
 	});
+	it('should pick an option from an array', function(){
+		let index = 0;
+		for(index = 0; index < numberOfTrials; index++) {
+			assert.ok(optionsList.indexOf(choose(optionsList)) !== -1);
+		}
+	});
 });

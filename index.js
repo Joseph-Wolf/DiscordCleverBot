@@ -62,8 +62,9 @@ settingsDb.get(keys.DiscordKey, function(doc){
 		});
 		discord.registerMessage(/fact[s]? about/i, function(message){
 			let trimmedContent = message.cleanContent.split(/fact[s]? about/i)[1].trim();
-			let response = action.getFact(trimmedContent);
-			message.reply(response);
+			action.getFact(trimmedContent, function(response){
+				message.reply(response);
+			});
 		});
 		discord.registerMessage(new RegExp('[\\d]+[\\s]+' + CurrencyName + '[s]?[\\s]+(to)','i'), function(message){
 			let amount = parseInt(message.cleanContent.match(/[\d]+/));
@@ -101,6 +102,12 @@ settingsDb.get(keys.DiscordKey, function(doc){
 		discord.welcomeUsers(false);
 
 		//Register new bot is playing
-		new BotIsPlaying(config.BotIsPlaying.TicksPerMinute, config.BotIsPlaying.StartOnLoad, config.BotIsPlaying.Options, client);
+		new CronJob({ //A job that changes the game the bot is playing periodically
+			cronTime: `*/${config.BotIsPlaying.TicksPerMinute} * * * *`,
+			onTick: function(){
+				callback.user.setGame(action.choose(config.BotIsPlaying.Options));
+			},
+			start: config.BotIsPlaying.StartOnLoad
+		});
 	});
 });
