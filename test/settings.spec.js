@@ -14,14 +14,14 @@ function generateDataFilePath(){
 
 describe('Settings', function(){
 	describe('constructor', function(){
-		it('should create an object', function() {
-			let db = new data(generateDataFilePath());
+		it('should create an object', function(done) {
+			let db = new data(generateDataFilePath(), done);
 			assert.ok(db);
 		});
-		it('should name the file properly', function(){
+		it('should name the file properly', function(done){
 			let randomName = getRandomString();
 			let randomPath = path.join(tmpDataPath, randomName);
-			let db = new data(randomPath);
+			let db = new data(randomPath, done);
 			assert.equal(path.basename(db.path), randomName);
 		});
 		it('should call the callback', function(done){

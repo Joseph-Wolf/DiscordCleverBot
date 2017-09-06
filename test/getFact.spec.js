@@ -10,7 +10,7 @@ describe('getFact', function(){
 			getFact('cat', function(response){
 				assert.ok(response);
 				done();
-			})
+			});
 		});
 	});
 	describe('years', function(){
@@ -29,13 +29,37 @@ describe('getFact', function(){
 			});
 		});
 	});
-	describe('date', function(){ //TODO: Fix
+	describe('date', function(){
 		it('should return a random fact', function(done){
 			getFact('date', function(response){
-				assert.equal('sdfks', response);
+				assert.ok(response);
 				done();
 			});
-		})
+		});
+		it('should return a specific fact', function(done){
+			let month = getRandomInt(1, 12);
+			let day = getRandomInt(1, 32);
+			getFact('date ' + month + ' ' + day, function(response){
+				assert.ok(response);
+				done();
+			});
+		});
+		it('should return an random fact for invalid month', function(done){
+			let month = getRandomInt(-99999, 0);
+			let day = getRandomInt(1, 32);
+			getFact('date ' + month + ' ' + day, function(response){
+				assert.ok(response);
+				done();
+			});
+		});
+		it('should return an random fact for invalid day', function(done){
+			let month = getRandomInt(1, 12);
+			let day = getRandomInt(50, 9999);
+			getFact('date ' + month + ' ' + day, function(response){
+				assert.ok(response);
+				done();
+			});
+		});
 	});
 	describe('number', function(){
 		it('should return a random fact', function(done){

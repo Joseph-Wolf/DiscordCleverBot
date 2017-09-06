@@ -3,5 +3,5 @@
 const getRandomInt = require('./getRandomInt.js');
 
 module.exports = function(){
-  return getRandomInt(Number.MIN_SAFE_INTEGER, Number.MAX_SAFE_INTEGER).toString();
+  return getRandomInt(0, Number.MAX_SAFE_INTEGER).toString();
 }

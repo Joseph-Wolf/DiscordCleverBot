@@ -7,8 +7,12 @@ const idFieldName = 'name';
 module.exports = class Settings extends Data {
 	constructor(dbPath, callback){
 		super(dbPath, function(err){
-			let self = this;
-			self.db.ensureIndex({fieldName: idFieldName}, callback);
+			if(err === null){
+				let self = this;
+				self.db.ensureIndex({fieldName: idFieldName}, callback);
+			} else {
+				callback(err);
+			}
 		});
 	}
 }

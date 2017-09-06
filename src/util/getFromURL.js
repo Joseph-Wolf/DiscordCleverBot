@@ -11,6 +11,7 @@ module.exports = function(url, callback) {
 			callback(body);
 		} else {
 			console.log(error);
+			callback('There was an error with your request.');
 		}
 	});
 }

@@ -17,12 +17,17 @@ module.exports = function(subject, callback) {
 					callback(data.fact);
 				} catch (e) {
 					console.log(e.message);
+					callback(e.message);
 				}
 			}
 		} else if (/year/i.test(subject)) {
 			url = 'http://numbersapi.com/' + number + '/year';
 		} else if (/date/i.test(subject)) {
-			let numberTwo = parseInt(subject.match(/[\d]+/g)[1]);
+			let matches = subject.match(/[\d]+/g);
+			let numberTwo;
+			if(matches !== null && matches.length >= 2){
+				numberTwo = parseInt(matches[1]);
+			}
 			url = 'http://numbersapi.com/';
 			if(number === 'random' || numberTwo === undefined || number > 12 || numberTwo > 32) { //try to make sure the date is simi accurate
 				url = url + 'random';
@@ -36,7 +41,6 @@ module.exports = function(subject, callback) {
 			url = 'http://numbersapi.com/' + number + '/math';
 		} else {
 			return 'I have facts about cats, years, dates (month/day), numbers, and number trivia.';
-			return;
 		}
 		getFromURL(url, reply);
 	} catch (e) {
