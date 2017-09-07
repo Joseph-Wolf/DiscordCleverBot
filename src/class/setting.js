@@ -1,10 +1,8 @@
 "use strict";
 
-class Setting{
+module.exports = class Setting{
 	constructor(name, value) {
 		this.name = name;
 		this.value = value;
 	}
 };
-
-module.exports = Setting;

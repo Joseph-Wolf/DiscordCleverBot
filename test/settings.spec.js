@@ -5,6 +5,7 @@ const fs = require('fs');
 const rimraf = require('rimraf');
 const path = require('path');
 const getRandomString = require('../src/util/getRandomString.js');
+const setting = require('../src/class/setting.js');
 const data = require('../src/db/settings.js');
 const tmpDataPath = path.join('test','data');
 
@@ -26,6 +27,10 @@ describe('Settings', function(){
 		});
 		it('should call the callback', function(done){
 			new data(generateDataFilePath(), done);
+		});
+		it('should set dataType', function(done){
+			let db = new data(generateDataFilePath(), done);
+			assert.equal(db.dataType, setting);
 		});
 	});
 	after(function(){

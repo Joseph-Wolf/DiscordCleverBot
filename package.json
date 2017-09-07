@@ -23,6 +23,6 @@
     "rimraf": "^2.6.1"
   },
   "scripts": {
-    "test": "mocha"
+    "test": "mocha --recursive"
   }
 }

@@ -1,12 +1,10 @@
 "use strict";
 
-class User{
+module.exports = class User{
 	constructor() {
 		let self = this;
-		self.id;
+		self._id;
 		self.discordId;
 		self.money = 0;
 	}
 };
-
-module.exports = User;

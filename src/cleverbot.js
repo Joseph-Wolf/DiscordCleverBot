@@ -42,11 +42,12 @@ class cbot{
 		self.bot.create(function(err, response){
 			if(err){ //will return false if there was an error
 				self.valid = false;
+				return callback(err);
 			} else {
 				self.valid = true;
 				self.bot.setNick(self.token); //set the nickname of the session
+				return callback(null, {user: user, key: key});
 			}
-			callback(self.valid, user, key);
 		});
 	}
 }

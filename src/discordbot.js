@@ -16,7 +16,7 @@ class discord{
 				if (authorIsNotBot && botIsMentioned) { //send cleaned message to cleverbot
 					for(var item of self.messageRegistrations){ //loop through each of the registered messages
 						if(item.expression.test(content)){ //if the content of the message matches the expression
-							item.callback(message); //Execute the callback with the message
+							item.callback(null, message); //Execute the callback with the message
 							break;
 						}
 					}
@@ -27,7 +27,7 @@ class discord{
 	}
 	authenticate(value, callback){
 		let self = this;
-		self.client.login(value).then(callback, function(){
+		self.client.login(value).then(callback, function(err){
 			getConsoleInput('Discord Bot Key > ', function(answer) {
 				self.authenticate(answer, callback); //Loop until valid
 			});
