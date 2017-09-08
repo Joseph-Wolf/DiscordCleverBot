@@ -1,11 +1,7 @@
 "use strict";
 
-function isNumeric(n) {
-  return !isNaN(parseFloat(n)) && isFinite(n);
-}
-
 module.exports = function(min, max) {
-	if(!isNumeric(min) || !isNumeric(max)){
+	if(!Number.isInteger(min) || !Number.isInteger(max)){
 		throw new Error('getRandomInt requires numeric parameters.');
 	}
 	if(min < max) {
