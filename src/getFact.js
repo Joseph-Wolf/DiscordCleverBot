@@ -12,13 +12,13 @@ module.exports = function(subject, callback) {
 	try {
 		if(/cat/i.test(subject)) {
 			url = 'https://catfact.ninja/fact';
-			reply = function(data) {
-				try { //format the message
-					callback(data.fact);
-				} catch (e) {
-					console.log(e.message);
-					callback(e.message);
+			reply = function(err, data) {
+				if(err){
+					return callback(err);
+				} else if(data){
+					return callback(null, data.fact);
 				}
+				return callback('Reply was not in the expected format.');
 			}
 		} else if (/year/i.test(subject)) {
 			url = 'http://numbersapi.com/' + number + '/year';
@@ -40,11 +40,11 @@ module.exports = function(subject, callback) {
 		} else if (/number/i.test(subject)) {
 			url = 'http://numbersapi.com/' + number + '/math';
 		} else {
-			return 'I have facts about cats, years, dates (month/day), numbers, and number trivia.';
+			return callback(null, 'I have facts about cats, years, dates (month/day), numbers, and number trivia.');
 		}
 		getFromURL(url, reply);
 	} catch (e) {
 		console.log(e.message);
-		return 'I encountered an error getting the fact for you.';
+		return callback('I encountered an error getting the fact for you.');
 	}
 }

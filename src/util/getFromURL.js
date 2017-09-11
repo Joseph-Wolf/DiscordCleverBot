@@ -8,10 +8,9 @@ module.exports = function(url, callback) {
 		json: true
 	}, function (error, response, body) {
 		if (!error && response.statusCode === 200) {
-			callback(body);
+			callback(null, body);
 		} else {
-			console.log(error);
-			callback('There was an error with your request.');
+			callback(error);
 		}
 	});
 }

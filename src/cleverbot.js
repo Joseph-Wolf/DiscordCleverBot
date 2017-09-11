@@ -11,29 +11,30 @@ class cbot{
 		self.token = getRandomInt(Number.MIN_SAFE_INTEGER, Number.MAX_SAFE_INTEGER).toString();
 		self.isBroken = false;
 	}
-	ask(message){
+	ask(message, callback){
 		let self = this;
 		if(self.valid){
 			self.bot.create(function(err, response){
-				if(!err){
-					self.bot.ask(message.cleanContent.trim(), function(err, response){
-						if(!err){
-							self.isBroken = false; //Reset broken indicator
-							if(response === undefined){ //Reply might have been missed
-								response = 'What do you mean?'; //Ask for clarification to try again
-							}
-						} else {
-							if(!self.isBroken) { //don't want to spam the chat
-								response = 'I am broken... (XuX)';
-							}
-							self.isBroken = true;
-						}
-						message.reply(response);
-					});
+				if(err){
+					return callback(err);
 				}
+				return self.bot.ask(message, function(err, response){
+					if(err){
+						if(!cleverbot.isBroken){
+							cleverbot.isBroken = true;
+							return callback(null, 'I am broken... (XuX)');
+						}
+						return callback(err); //If already replied with broken message don't keep replying
+					}
+					if(response === undefined || response === null){ //If response is no good then ask again
+						return callback(null, 'What do you mean?');
+					}
+					cleverbot.isBroken = false;
+					return callback(null, response);
+				});
 			});
 		} else {
-			message.reply('Please set up credentials for Cleverbot feature.');
+			return callback(null, 'Please set up credentials for Cleverbot feature.');
 		}
 	}
 	authenticate(user, key, callback){
