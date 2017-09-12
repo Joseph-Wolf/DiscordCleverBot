@@ -1,50 +1,61 @@
 "use strict";
 
 const assert = require('assert');
-const discordbot = require('../src/discordbot.js');
+const discord = require('../src/discordbot.js');
+
+function getEventCount(bot){
+	return bot.client._eventsCount;
+}
 
 describe('discordbot', function(){
 	describe('constructor', function(){
 		it('should exist', function(){
-			assert.ok(discordbot);
+			let bot = new discord();
+			assert.ok(bot);
 		});
 		it('should create a client', function(){
-			assert.ok(discordbot.client);
+			let bot = new discord();
+			assert.ok(bot.client);
 		});
-		it('should initialize messageRegistrations', function(){
-			assert.ok(discordbot.messageRegistrations);
-			assert.ok(discordbot.messageRegistrations.length === 0);
-		});	
 	});
-	/*describe('authenticate', function(){
-		it('should reject invalid key', function(){
-			discordbot.authenticate('dfjjsj', function(err, done){
-				if(err){
-					return done();
-				}
-				done('Did not throw exception.');
-			});
-		});
-	});*/
 	describe('registerMessage', function(){
 		it('should add messages', function(){
-			let initialLength = discordbot.messageRegistrations.length;
-			discordbot.registerMessage(/expression/, null);
-			let secondaryLength = discordbot.messageRegistrations.length;
+			let bot = new discord();
+			let initialLength = getEventCount(bot);
+			bot.registerMessage(/expression/, null);
+			let secondaryLength = getEventCount(bot);
 			assert.equal(initialLength + 1, secondaryLength);
 		});
-		/*it('should execute callback on expression match', function(done){
-			discordbot.registerMessage(/blah/, null);
-			discordbot.registerMessage(/hello/, done);
-			//TODO: execute the hello message
-		});*/
+		it('should execute callback on expression match', function(done){
+			let bot = new discord();
+			bot.registerMessage(/blah/, function(){
+				done('called wrong message');
+			});
+			bot.registerMessage(/hello/, done);
+			bot.registerMessage(/yo/, function(){
+				done('called wrong message');
+			});
+			//Mock the message
+			bot.client.user = {id: '1'}
+			let message = {cleanContent: 'hello world', author: {id: '2'}, isMentioned: function(){return true;}};
+			//Emit the message
+			bot.client.emit('message', message);
+		});
 	});
-	/*describe('welcomeUser', function(){
+	describe('welcomeUsers', function(){
 		it('should register the welcome message if true', function(){
-
+			let bot = new discord();
+			let initialLength = getEventCount(bot);
+			bot.welcomeUsers(true);
+			let secondaryLength = getEventCount(bot);
+			assert.equal(initialLength + 1, secondaryLength);
 		});
 		it('should not register the welcome message if false', function(){
-
+			let bot = new discord();
+			let initialLength = getEventCount(bot);
+			bot.welcomeUsers(false);
+			let secondaryLength = getEventCount(bot);
+			assert.equal(initialLength, secondaryLength);
 		});
-	});*/
+	});
 });

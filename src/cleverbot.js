@@ -3,8 +3,8 @@
 const cleverbot = require("cleverbot.io");
 const getRandomInt = require('./util/getRandomInt.js');
 
-class cbot{
-	constructor(user, key){
+module.exports = class cbot{
+	constructor(){
 		let self = this;
 		self.bot = null;
 		self.valid = false;
@@ -37,9 +37,9 @@ class cbot{
 			return callback(null, 'Please set up credentials for Cleverbot feature.');
 		}
 	}
-	authenticate(user, key, callback){
+	authenticate(doc, callback){
 		let self = this;
-		self.bot = new cleverbot(user, key);
+		self.bot = new cleverbot(doc.user, doc.key);
 		self.bot.create(function(err, response){
 			if(err){ //will return false if there was an error
 				self.valid = false;
@@ -52,5 +52,3 @@ class cbot{
 		});
 	}
 }
-
-module.exports = new cbot();
