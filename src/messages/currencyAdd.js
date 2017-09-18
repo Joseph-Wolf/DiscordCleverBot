@@ -7,8 +7,22 @@ module.exports = function(discord, db, currencyName){
 		}
 		let amount = parseInt(message.cleanContent.match(/[\d]+/));
 		let user = message.mentions.users[0];
-		usersDb.addCurrency(amount, user);
-		//TODO: update db record
-		return message.reply('I gave ' + amount + ' to ' + user);
+		//construct the user object
+
+		//Get the user from the DB
+		db.get(user, function(err, doc){
+			if(err){
+				return message.reply('I encountered an error giving money to user');
+			}
+			//Add the money to the retrieved user
+			doc.addMoney(amount);
+			//Update the user
+			db.set(doc, function(err, doc){
+				if(err){
+					return message.reply('I encountered an error giving money to user');
+				}
+				return message.reply('I gave ' + amount + ' to ' + user);
+			});
+		});
 	});
 }
