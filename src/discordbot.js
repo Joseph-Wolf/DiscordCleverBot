@@ -1,7 +1,6 @@
 "use strict";
 
 const Discord = require('discord.js');
-const getConsoleInput = require('./util/getConsoleInput.js');
 
 module.exports = class discord{
 	constructor(){
@@ -15,10 +14,8 @@ module.exports = class discord{
 		let self = this;
 		self.client.login(value).then(function(accepted){
 			return callback(null, accepted);
-		}).catch(function(){
-			getConsoleInput('Discord Bot Key > ', function(answer) {
-				self.authenticate(answer, callback); //Loop until valid
-			});
+		}).catch(function(err){
+			return callback(err);
 		});
 	}
 	welcomeUsers(enable, message){

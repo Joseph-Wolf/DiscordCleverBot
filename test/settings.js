@@ -5,8 +5,8 @@ const fs = require('fs');
 const rimraf = require('rimraf');
 const path = require('path');
 const getRandomString = require('../src/util/getRandomString.js');
-const setting = require('../src/class/setting.js');
 const data = require('../src/db/settings.js');
+const Setting = require('../src/db/class/setting.js');
 const tmpDataPath = path.join('test','data');
 
 function generateDataFilePath(){
@@ -30,7 +30,34 @@ describe('Settings', function(){
 		});
 		it('should set dataType', function(done){
 			let db = new data(generateDataFilePath(), done);
-			assert.equal(db.dataType, setting);
+			assert.equal(db.dataType, Setting);
+		});
+	});
+	describe('set/get', function(){
+		it('should get, set, and update a setting', function(done){
+			let db = new data(generateDataFilePath());
+			let setting = new Setting({key: getRandomString(), value: getRandomString()});
+			db.set(setting, function(err, newDoc){
+				if(err){
+					return done(err);
+				}
+				db.get({_id: newDoc._id}, function(err, doc){
+					if(err){
+						return done(err);
+					}
+					assert.equal(setting.key, doc.key);
+					assert.equal(setting.value, doc.value);
+					let newValue =  getRandomString();
+					doc.value = newValue;
+					db.set(doc, function(err, newDoc){
+						if(err){
+							return done(err);
+						}
+						assert.equal(newValue, newDoc.value);
+						return done();
+					});
+				});
+			});
 		});
 	});
 	after(function(){

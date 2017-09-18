@@ -11,6 +11,12 @@ const tmpDataPath = path.join('test','data');
 function generateDataFilePath(){
 	return path.join(tmpDataPath, getRandomString());
 }
+function getCount(db, doc, callback){
+	if(doc === null){
+		doc = {};
+	}
+	db.count(doc, callback);
+}
 
 describe('Data', function() {
 	describe('constructor', function() {
@@ -65,6 +71,54 @@ describe('Data', function() {
 						assert.equal(doc.value, record.value);
 						return done();
 					}
+				});
+			});
+		});
+		it('should update and retrieve a record', function(done){
+			let db = new data(generateDataFilePath());
+			let keyString = getRandomString();
+			let valueString = getRandomString();
+			let valueString2 = getRandomString();
+			let record = {key: keyString, value: valueString};
+			let record2 = {key: keyString, value: valueString2};
+			getCount(db.db, {key: keyString}, function(err, count){
+				let count1 = count;
+				db.set(record, function(err, newDoc){
+					if(err){
+						return done(err);
+					}
+					record._id = newDoc._id;
+					record2._id = newDoc._id;
+					db.get({key: record.key}, function(err, doc){
+						if(err){
+							return done(err);
+						} else {
+							assert.equal(doc.key, record.key);
+							assert.equal(doc.value, record.value);
+							getCount(db.db, {key: keyString}, function(err, count){
+								let count2 = count;
+								assert.equal(count1 + 1, count2);
+								db.set(record2, function(err, sameDoc){
+									if(err){
+										return done(err);
+									}
+									db.get({key: record.key}, function(err, doc){
+										if(err){
+											return done(err);
+										}
+										assert.equal(doc.value, record2.value);
+										getCount(db.db, {key: keyString}, function(err, count){
+											if(err){
+												return done(err);
+											}
+											assert.equal(count2, count);
+											return done();
+										})
+									});
+								});
+							});
+						}
+					});
 				});
 			});
 		});

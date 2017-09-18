@@ -30,21 +30,29 @@ module.exports = class Data {
 	set(data, callback){
 		let self = this;
 		if(self.dataType !== null && !(data instanceof self.dataType)){
-			return callback('Parameter: ' + data + ' is not an instance of expected type: ' + self.dataType);
+			return callback('Cannot set parameter of this type');
 		}
-		self.db.insert(data, callback);
+		self.db.findOne({_id: data._id}, function(err, doc){
+			if(err || doc === null){
+				return self.db.insert(data, callback);
+			}
+			return self.db.update(doc, data, {multi: false, returnUpdatedDocs: true}, function(err, count, newDoc){
+				return callback(err, newDoc);
+			});
+		})
 	}
 
 	get(data, callback){
 		let self = this;
-		if(self.dataType !== null && !(data instanceof self.dataType)) {
-			return callback('Parameter: ' + data + ' is not an instance of expected type: ' + self.dataType);
-		}
+		//TODO: is there a way to check if the DB has been corrupted?
 		self.db.findOne(data, function(err, doc){
-			if(self.dataType !== null){
-				doc = Object.assign(new self.dataType, doc);
+			if(err){
+				return callback(err);
 			}
-			callback(err, doc);
+			if(self.dataType !== null){
+				doc = new (self.dataType)(doc);
+			}
+			return callback(err, doc);
 		});
 	}
 }

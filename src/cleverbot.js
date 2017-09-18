@@ -44,11 +44,10 @@ module.exports = class cbot{
 			if(err){ //will return false if there was an error
 				self.valid = false;
 				return callback(err);
-			} else {
-				self.valid = true;
-				self.bot.setNick(self.token); //set the nickname of the session
-				return callback(null, {user: user, key: key});
 			}
+			self.valid = true;
+			self.bot.setNick(self.token); //set the nickname of the session
+			return callback(null, {user: user, key: key});
 		});
 	}
 }

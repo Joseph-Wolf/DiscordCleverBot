@@ -58,4 +58,22 @@ describe('discordbot', function(){
 			assert.equal(initialLength, secondaryLength);
 		});
 	});
+	describe('authenticate', function(){
+		it('should fail to authenticate garbage key', function(done){
+			let bot = new discord();
+			let key = 'garbage';
+			bot.authenticate(key, function(err, accepted){
+				if(err){
+					return done();
+				}
+				return done('Invalid Discord key did not fail');
+			});
+		});
+		it('should authenticate valid key', function(done){
+			let bot = new discord();
+			//TODO: pull valid key from local DB?
+			let key = 'validKey';
+			bot.authenticate(key, done);
+		});
+	});
 });
