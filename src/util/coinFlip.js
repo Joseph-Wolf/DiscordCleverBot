@@ -1,6 +1,6 @@
 "use strict";
 
-const getRandomIntInclusive = require('./util/getRandomIntInclusive.js');
+const getRandomIntInclusive = require('./getRandomIntInclusive.js');
 
 module.exports = function() {
 	return getRandomIntInclusive(0,1);

@@ -1,6 +1,6 @@
 "use strict";
 
-const getRandomInt = require('./util/getRandomInt.js');
+const getRandomInt = require('./getRandomInt.js');
 
 module.exports = function(desiredCategory, callback) {
 	let randomSizes = [240, 250, 300, 350, 400, 450, 500, 550, 600];
@@ -11,7 +11,6 @@ module.exports = function(desiredCategory, callback) {
 
 	if(availableCategories.includes(desiredCategory.toLowerCase())) {
 		return callback(null, 'http://loremflickr.com/' + urlParts.join('/'));
-	} else {
-		return callback('No. I only have pictures of ' + availableCategories.join(', '));
 	}
+	return callback('No. I only have pictures of ' + availableCategories.join(', '));
 }

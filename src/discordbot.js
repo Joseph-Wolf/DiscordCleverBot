@@ -29,14 +29,24 @@ module.exports = class discord{
 			self.client.removeAllListeners('guildMemberAdd'); //Remove any existing welcome messages
 		}
 	}
-	registerMessage(expression, callback){
+	registerMessage(expression, callback, additionalParams){
 		let self = this;
+		if(additionalParams === null || additionalParams === undefined){
+			additionalParams = {};
+		}
 		self.client.on('message', message => {
 			let content = message.cleanContent.trim() //trim any excess spaces and make it a happy string
 			let authorIsNotBot = message.author.id !== self.client.user.id; //is the author the bot? don't want infinite loops
 			let botIsMentioned = message.isMentioned(self.client.user); //is the bot mentioned?
 			if (authorIsNotBot && botIsMentioned && expression.test(content)) { //send cleaned message to cleverbot
-				return callback(null, message); //Execute the callback with the message
+				additionalParams.text = message.cleanContent.trim();
+				additionalParams.user = 'dummy'; //TODO: pass users to the callback incase they are needed
+				return callback(null, additionalParams, function(err, reply){
+					if(err){
+						return;
+					}
+					return message.reply(reply);
+				}); //Execute the callback with the message
 			}
 			return; //Don't return the callback or else it will get used
 		});

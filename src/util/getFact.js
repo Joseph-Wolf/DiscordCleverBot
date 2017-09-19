@@ -1,6 +1,6 @@
 "use strict";
 
-const getFromURL = require('./util/getFromURL.js');
+const getFromURL = require('./getFromURL.js');
 
 module.exports = function(subject, callback) { 
 	let number = parseInt(subject.match(/[\d]+/));

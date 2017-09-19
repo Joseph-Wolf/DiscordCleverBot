@@ -41,6 +41,20 @@ describe('discordbot', function(){
 			//Emit the message
 			bot.client.emit('message', message);
 		});
+		it('should pass an err, params, and callback', function(done){
+			let bot = new discord();
+			let expectedText = 'hello world';
+			bot.registerMessage(/hello/, function(err, params, callback){
+				assert.equal(expectedText, params.text);
+				assert.ok(callback);
+				return done();
+			});
+			//Mock the message
+			bot.client.user = {id: '1'}
+			let message = {cleanContent: 'hello world', author: {id: '2'}, isMentioned: function(){return true;}};
+			//Emit the message
+			bot.client.emit('message', message);
+		});
 	});
 	describe('welcomeUsers', function(){
 		it('should register the welcome message if true', function(){

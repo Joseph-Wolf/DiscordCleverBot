@@ -5,7 +5,17 @@ const getConsoleInput = require('./src/util/getConsoleInput.js');
 const config = require('./config.json');
 const Settings = require('./src/db/settings.js');
 const Users = require('./src/db/users.js');
-const choose = require('./src/choose.js');
+const choose = require('./src/util/choose.js');
+const message = {
+	choose: require('./src/messages/choose.js'),
+	showMe: require('./src/messages/showMe.js'),
+	coinFlip: require('./src/messages/coinFlip.js'),
+	getFact: require('./src/messages/getFact.js'),
+	cleverbotLogin: require('./src/messages/cleverbotLogin.js'),
+	cleverbotAsk: require('./src/messages/cleverbotAsk.js'),
+	currencyAdd: require('./src/messages/currencyAdd.js'),
+	currencySubtract: require('./src/messages/currencySubtract.js')
+};
 
 const discord = new DiscordClass();
 const cleverbot = new CleverbotClass();
@@ -22,11 +32,11 @@ let BotIsPlaying = new CronJob({ //A job that changes the game the bot is playin
 });
 
 //Register commands with the discord bot
-require('./src/messages/showMe.js')(discord);
-require('./src/messages/choose.js')(discord);
-require('./src/messages/coinFlip.js')(discord);
-require('./src/messages/facts.js')(discord);
-require('./src/messages/cleverbotLogin.js')(discord);
+discord.registerMessage(/show me/i, message.showMe);
+discord.registerMessage(/choose/i, message.choose);
+discord.registerMessage(/flip a coin/i, message.coinFlip);
+discord.registerMessage(/fact[s]? about/i, message.getFact);
+discord.registerMessage(/(auth|login).+?cleverbot/i, message.cleverbotLogin);
 
 //Welcome Users
 settingsDb.get({key: 'WelcomeUsers'}, function(err, doc){
@@ -49,8 +59,8 @@ settingsDb.get({key: 'CurrencyName'}, function(err, doc){
 	}
 	let CurrencyName = doc.value;
 	//Register currency commands
-	require('./src/messages/currencyAdd.js')(discord, usersDb, CurrencyName);
-	require('./src/messages/currencySubtract.js')(discord, usersDb, CurrencyName);
+	discord.registerMessage(new RegExp('[\\d]+[\\s]+' + currencyName + '[s]?[\\s]+(to)','i'), message.currencyAdd, {db: usersDb});
+	discord.registerMessage(new RegExp('[\\d]+[\\s]+' + currencyName + '[s]?[\\s]+(from)', 'i'), message.currencySubtract, {db: usersDb});
 });
 
 //Register cleverbot
@@ -96,7 +106,7 @@ settingsDb.get({key: 'DiscordToken'}, function(err, doc){
 			BotIsPlaying.start();
 		}
 		//Match all other cases to cleverbot
-		require('./src/messages/cleverbotAsk.js')(discord);
+		discord.registerMessage(/./i, message.cleverbotAsk, {cleverbot: cleverbot});
 		return console.log('accepted Discord key');
 	});
 });

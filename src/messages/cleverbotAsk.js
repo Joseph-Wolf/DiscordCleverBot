@@ -1,16 +1,15 @@
 "use strict";
 
-module.exports = function(discord){
-	discord.registerMessage(/./i, function(err, message){
+module.exports = function(err, params, callback){
+	if(err || params === null || params === undefined || params.text === null || params.text === undefined || params.cleverbot === null || params.cleverbot === undefined){
+		return callback('Error asking cleverbot');
+	}
+	let cleverbot = params.cleverbot;
+	let text = params.text;
+	cleverbot.ask(text, function(err, response){
 		if(err){
-			return message.reply(err);
+			return callback(err); //return no reply on errors
 		}
-		let phrase = message.cleanContent.trim();
-		cleverbot.ask(phrase, function(err, response){
-			if(err){
-				return; //return no reply on errors
-			}
-			return message.reply(response);
-		});
+		return callback(null, response);
 	});
 }

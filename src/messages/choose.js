@@ -1,12 +1,13 @@
 "use strict";
 
-module.exports = function(discord){
-	discord.registerMessage(/choose/i, function(err, message){
-		if(err){
-			return message.reply("I can't choose!");
-		}
-		let trimmedContent = message.cleanContent.split(/choose/i)[1].trim();
-		let response = action.choose(trimmedContent);
-		return message.reply('I choose ' + response);
-	});
+const choose = require('../util/choose.js');
+
+module.exports = function(err, params, callback){
+	if(err || params === null || params === undefined || params.text === null || params.text === undefined){
+		return callback("I can't choose!");
+	}
+	let text = params.text;
+	let trimmedContent = text.split(/choose/i)[1].trim();
+	let response = choose(trimmedContent);
+	return callback(null, 'I choose ' + response);
 }

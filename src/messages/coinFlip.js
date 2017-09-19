@@ -1,13 +1,13 @@
 "use strict";
 
-module.exports = function(discord){
-	discord.registerMessage(/flip a coin/i, function(err, message){
-		if(err){
-			return message.reply(err);
-		}
-		if(action.coinFlip()){
-			return message.reply('Heads...');
-		}
-		return message.reply('Tails...');
-	});
+const coinFlip = require('../util/coinFlip.js');
+
+module.exports = function(err, params, callback){
+	if(err){
+		return callback("I don't have a coin");
+	}
+	if(coinFlip()){
+		return callback(null, 'Heads...');
+	}
+	return callback(null, 'Tails...');
 }

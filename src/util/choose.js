@@ -1,6 +1,6 @@
 "use strict";
 
-const getRandomInt = require('./util/getRandomInt.js');
+const getRandomInt = require('./getRandomInt.js');
 
 module.exports = function(message) {
 	let listOfObjects = message;
