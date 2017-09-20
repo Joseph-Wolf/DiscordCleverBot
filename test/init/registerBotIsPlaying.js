@@ -1,30 +1,28 @@
 "use strict";
 
 const assert = require('assert');
+const sinon = require('sinon')
 const CronJob = require('cron').CronJob;
 const registerBotIsPlaying = require('../../src/init/registerBotIsPlaying.js');
 
 describe('registerBotIsPlaying', function(){
-	it('should accept a discord and config parameters', function(done){
-		let job = null;
-		let config = {cronTime: '* * * * *', start: true, options: ['one', 'two', 'three']};
+	it('should accept a discord and config parameters', function(){
+		var clock = sinon.useFakeTimers();
+		let config = {cronTime: '* * * * * *', start: true, options: ['one', 'two', 'three']};
 		let discord = { 
 			client: {
 				user: {
 					setGame: function(string){
-						console.log('jobrun');
-						done();
+						assert.ok(config.options.indexOf(string) !== -1);
 					}
 				}
 			}
 		};
-		job = registerBotIsPlaying(discord, config);
-		assert.ok(job.running);
-		done();
-	});
-	/*
-	it('should return a CronJob to be started', function(){
+		let job = registerBotIsPlaying(discord, config);
 
+		clock.tick(1000);
+		assert.ok(job.running);
+		job.stop();
+		clock.restore();
 	});
-*/
 });

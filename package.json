@@ -20,7 +20,8 @@
   "devDependencies": {
     "fs": "0.0.1-security",
     "mocha": "^3.5.0",
-    "rimraf": "^2.6.1"
+    "rimraf": "^2.6.1",
+    "sinon": "^3.3.0"
   },
   "scripts": {
     "test": "mocha --recursive"
