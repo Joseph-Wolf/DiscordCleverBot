@@ -15,6 +15,22 @@ describe('User', function(){
 			let user = new User();
 			assert.equal(0, user.money);
 		});
+		it('should populate given inputs', function(){
+			let startingName = 'kdfskjfks';
+			let startingMoney = 55;
+			let user = new User({name: startingName, money: startingMoney, dummyToBeIgnored: 'anything i want it to be'});
+			assert.equal(startingName, user.name);
+			assert.equal(startingMoney, user.money);
+		});
+		it('should not allow non int money initialization', function(){
+			let invalidMonies = [null, undefined, 'string', -1, 1.1];
+			let expectedDefaultMoney = 55;
+			let index = 0;
+			for(index = 0; index < invalidMonies.length; index++){
+				let user = new User({money: expectedDefaultMoney});
+				assert.equal(expectedDefaultMoney, user.money);
+			}
+		});
 		describe('Add', function(){
 			it('should add positive money', function(){
 				let user = new User();

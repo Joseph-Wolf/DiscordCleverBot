@@ -72,7 +72,7 @@ describe('getFact', function(){
 	});
 	describe('Message', function(){
 		it('should return sanatized error', function(done){
-			getFactMessage(true, null, function(err, reply){
+			getFactMessage(true, function(err, reply){
 				if(err){
 					return done();
 				}
@@ -80,7 +80,7 @@ describe('getFact', function(){
 			});
 		});
 		it('should return error for null input', function(done){
-			getFactMessage(null, null, function(err, reply){
+			getFactMessage(null, function(err, reply){
 				if(err){
 					return done();
 				}
@@ -89,7 +89,7 @@ describe('getFact', function(){
 		});
 		it('should return a reply', function(done){
 			let message = 'Please get facts about cats';
-			getFactMessage(null, {text: message}, done);
+			getFactMessage(null, done, {text: message});
 		});
 	});
 });

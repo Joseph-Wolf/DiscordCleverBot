@@ -14,7 +14,7 @@ describe('cleverbot', function(){
 	describe('Message', function(){
 		describe('Ask', function(){
 			it('should return sanatize error message', function(done){
-			cleverbotAskMessage(true, null, function(err, reply){
+			cleverbotAskMessage(true, function(err, reply){
 				if(err){
 					return done();
 				}
@@ -22,7 +22,7 @@ describe('cleverbot', function(){
 			});
 			});
 			it('should return error message for null text', function(done){
-				cleverbotAskMessage(null, null, function(err, reply){
+				cleverbotAskMessage(null, function(err, reply){
 					if(err){
 						return done();
 					}
@@ -32,12 +32,12 @@ describe('cleverbot', function(){
 			it('should return a reply', function(done){
 				let message = 'Please choose x, y, or z.';
 				let bot = new cleverbot();
-				cleverbotAskMessage(null, {text: message, cleverbot: bot}, done)
+				cleverbotAskMessage(null, done, {text: message, cleverbot: bot})
 			});
 		});
 		describe('Login', function(){
 			it('should return sanatize error message', function(done){
-			cleverbotAskMessage(true, null, function(err, reply){
+			cleverbotAskMessage(true, function(err, reply){
 				if(err){
 					return done();
 				}
@@ -45,7 +45,7 @@ describe('cleverbot', function(){
 			});
 			});
 			it('should return error message for null text', function(done){
-				cleverbotAskMessage(null, null, function(err, reply){
+				cleverbotAskMessage(null, function(err, reply){
 					if(err){
 						return done();
 					}
@@ -55,7 +55,7 @@ describe('cleverbot', function(){
 			it('should return a reply', function(done){
 				let message = 'Please choose x, y, or z.';
 				let bot = new cleverbot();
-				cleverbotAskMessage(null, {text: message, cleverbot: bot}, done)
+				cleverbotAskMessage(null, done, {text: message, cleverbot: bot})
 			});
 		});
 	});

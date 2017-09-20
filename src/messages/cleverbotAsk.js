@@ -1,6 +1,6 @@
 "use strict";
 
-module.exports = function(err, params, callback){
+module.exports = function(err, callback, params){
 	if(err || params === null || params === undefined || params.text === null || params.text === undefined || params.cleverbot === null || params.cleverbot === undefined){
 		return callback('Error asking cleverbot');
 	}

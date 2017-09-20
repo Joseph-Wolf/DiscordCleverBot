@@ -2,7 +2,7 @@
 
 const getFact = require('../util/getFact.js');
 
-module.exports = function(err, params, callback){
+module.exports = function(err, callback, params){
 	if(err || params === null || params === undefined || params.text === null || params.text === undefined) {
 		return callback("You don't need facts.");
 	}

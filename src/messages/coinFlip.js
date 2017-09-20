@@ -2,7 +2,7 @@
 
 const coinFlip = require('../util/coinFlip.js');
 
-module.exports = function(err, params, callback){
+module.exports = function(err, callback){
 	if(err){
 		return callback("I don't have a coin");
 	}

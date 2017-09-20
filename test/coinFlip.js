@@ -15,7 +15,7 @@ describe('coinFlip', function(){
 	});
 	describe('Message', function(){
 		it('should return a reply', function(done){
-			coinFlipMessage(null, null, done)
+			coinFlipMessage(null, done);
 		});
 	});
 });

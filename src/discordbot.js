@@ -1,6 +1,7 @@
 "use strict";
 
 const Discord = require('discord.js');
+const User = require('./db/class/user.js');
 
 module.exports = class discord{
 	constructor(){
@@ -40,13 +41,13 @@ module.exports = class discord{
 			let botIsMentioned = message.isMentioned(self.client.user); //is the bot mentioned?
 			if (authorIsNotBot && botIsMentioned && expression.test(content)) { //send cleaned message to cleverbot
 				additionalParams.text = message.cleanContent.trim();
-				additionalParams.user = 'dummy'; //TODO: pass users to the callback incase they are needed
-				return callback(null, additionalParams, function(err, reply){
+				additionalParams.user = new User({name: 'dummy'}); //TODO: pass users to the callback incase they are needed
+				return callback(null, function(err, reply){
 					if(err){
 						return;
 					}
 					return message.reply(reply);
-				}); //Execute the callback with the message
+				}, additionalParams); //Execute the callback with the message
 			}
 			return; //Don't return the callback or else it will get used
 		});

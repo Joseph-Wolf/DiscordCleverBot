@@ -39,7 +39,7 @@ module.exports = class Data {
 			return self.db.update(doc, data, {multi: false, returnUpdatedDocs: true}, function(err, count, newDoc){
 				return callback(err, newDoc);
 			});
-		})
+		});
 	}
 
 	get(data, callback){

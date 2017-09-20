@@ -18,7 +18,9 @@ module.exports = class User{
 		}
 		self._id = user._id;
 		self.name = user.name;
-		self.money = user.money;
+		if(isInteger(user.money) && isPositive(user.money)) {
+			self.money = user.money;
+		}
 		return;
 	}
 	addMoney(value){
