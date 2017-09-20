@@ -73,7 +73,6 @@ describe('discordbot', function(){
 			assert.equal(initialLength, secondaryLength);
 		});
 	});
-	/*TODO: find out why these do not work.
 	describe('authenticate', function(){
 		it('should fail to authenticate garbage key', function(done){
 			let bot = new discord();
@@ -87,10 +86,9 @@ describe('discordbot', function(){
 		});
 		it('should authenticate valid key', function(done){
 			let bot = new discord();
-			//TODO: pull valid key from local DB?
+			//TODO: find a way to insert a valid key without saving it in source control.
 			let key = 'validKey';
 			bot.authenticate(key, done);
 		});
 	});
-*/
 });
