@@ -47,7 +47,7 @@ describe('Currency', function(){
 					if(err){
 						return done(err);
 					}
-					db.get(user, function(err, doc){
+					db.get({name: user.name}, function(err, doc){
 						if(err){
 							return done(err);
 						}
