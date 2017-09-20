@@ -22,20 +22,19 @@ module.exports = class cbot{
 					if(err){
 						if(!cleverbot.isBroken){
 							cleverbot.isBroken = true;
-							return callback(null, 'I am broken... (XuX)');
+							return callback('I am broken... (XuX)');
 						}
 						return callback(err); //If already replied with broken message don't keep replying
 					}
 					if(response === undefined || response === null){ //If response is no good then ask again
-						return callback(null, 'What do you mean?');
+						return callback('What do you mean?');
 					}
 					cleverbot.isBroken = false;
 					return callback(null, response);
 				});
 			});
-		} else {
-			return callback(null, 'Please set up credentials for Cleverbot feature.');
 		}
+		return callback('Please set up credentials for Cleverbot feature.');
 	}
 	authenticate(doc, callback){
 		let self = this;

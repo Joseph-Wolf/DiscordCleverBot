@@ -1,18 +1,11 @@
 "use strict";
 
 const assert = require('assert');
-const fs = require('fs');
-const rimraf = require('rimraf');
-const path = require('path');
+const testUtils = require('../testUtils.js');
 const data = require('../../src/db/users.js');
 const getRandomString = require('../../src/util/getRandomString.js');
 const currencySubtractMessage = require('../../src/messages/currencySubtract.js');
 const User = require('../../src/db/class/user.js');
-const tmpDataPath = path.join('test','data');
-
-function generateDataFilePath(){
-	return path.join(tmpDataPath, getRandomString());
-}
 
 describe('Currency', function(){
 	describe('Subtract', function(){
@@ -34,13 +27,12 @@ describe('Currency', function(){
 				});
 			});
 			it('should throw error for insufficient funds', function(done){
-				let userName = getRandomString();
-				let userId = userName + 'Id';
+				let userId = getRandomString();
 				let startingBallance = 54;
 				let amountToTake = 55;
-				let message = 'Please take ' + amountToTake + ' from ' + userName;
-				let db = new data(generateDataFilePath());
+				let db = new data(testUtils.generateDataFilePath());
 				let user = new User({name: userId, money: startingBallance});
+				let message = 'Please take ' + amountToTake + ' from ' + user.name;
 				currencySubtractMessage(null, function(err, ballance){
 					if(err){
 						return done();
@@ -49,14 +41,13 @@ describe('Currency', function(){
 				}, {text: message, db: db, user: user})
 			});
 			it('should return a reply', function(done){
-				let userName = getRandomString();
-				let userId = userName + 'Id';
+				let userId = getRandomString();
 				let startingBallance = 66;
 				let amountToTake = 55;
 				let expectedBallance = startingBallance - amountToTake;
-				let message = 'Please take ' + amountToTake + ' from ' + userName;
-				let db = new data(generateDataFilePath());
+				let db = new data(testUtils.generateDataFilePath());
 				let user = new User({name: userId, money: startingBallance});
+				let message = 'Please take ' + amountToTake + ' from ' + user.name;
 				db.set(user, function(err, doc){
 					if(err){
 						return done(err);
@@ -77,9 +68,5 @@ describe('Currency', function(){
 			});
 		});
 	});
-	after(function(){
-		if (fs.existsSync(tmpDataPath)){
-			rimraf.sync(tmpDataPath);
-		}
-	});
+	after(testUtils.deleteTempDataPath);
 });

@@ -2,8 +2,8 @@
 
 const CleverbotSettingKey = 'CleverbotToken';
 
-module.exports = function (db, cleverbot){
-	db.get({key: CleverbotSettingKey}, function(err, doc){
+module.exports = function (settingsDb, cleverbot){
+	settingsDb.get({key: CleverbotSettingKey}, function(err, doc){
 		if(err || doc === null || doc === undefined || doc.value === null || doc.value === undefined || doc.value.user === null || doc.value.user === undefined || doc.value.key === null || doc.value.key === undefined) {
 			return;
 		}

@@ -1,18 +1,11 @@
 "use strict";
 
 const assert = require('assert');
-const fs = require('fs');
-const rimraf = require('rimraf');
-const path = require('path');
+const testUtils = require('../testUtils.js');
 const data = require('../../src/db/users.js');
 const getRandomString = require('../../src/util/getRandomString.js');
 const currencyAddMessage = require('../../src/messages/currencyAdd.js');
 const User = require('../../src/db/class/user.js');
-const tmpDataPath = path.join('test','data');
-
-function generateDataFilePath(){
-	return path.join(tmpDataPath, getRandomString());
-}
 
 describe('Currency', function(){
 	describe('Add', function(){
@@ -34,9 +27,8 @@ describe('Currency', function(){
 				});
 			});
 			it('should return a reply', function(done){
-				let userName = getRandomString();
-				let userId = userName + 'Id';
-				let db = new data(generateDataFilePath());
+				let userId = getRandomString();
+				let db = new data(testUtils.generateDataFilePath());
 				let user = new User({name: userId});
 				let startingBallance = user.money;
 				let amountToAdd = 22;
@@ -57,9 +49,5 @@ describe('Currency', function(){
 			});
 		});
 	});
-	after(function(){
-		if (fs.existsSync(tmpDataPath)){
-			rimraf.sync(tmpDataPath);
-		}
-	});
+	after(testUtils.deleteTempDataPath);
 });

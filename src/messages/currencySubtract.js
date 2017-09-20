@@ -25,7 +25,7 @@ module.exports = function(err, callback, params){
 				if(err){
 					return callback('I encountered an error taking money to user');
 				}
-				return callback(null, 'I took ' + amount + ' to ' + user.name);
+				return callback(null, 'I took ' + amount + ' to ' + doc.name);
 			});
 		});
 		

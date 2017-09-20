@@ -17,8 +17,8 @@ function authenticateDiscordWithKey(key, discord, callback){
 		return callback(null, accepted);
 	});
 }
-module.exports = function (db, discord, cleverbot, usersDb, config){
-	db.get({key: DiscordbotSettingKey}, function(err, doc){
+module.exports = function (settingsDb, discord, cleverbot, usersDb, config){
+	settingsDb.get({key: DiscordbotSettingKey}, function(err, doc){
 		if(err || doc === null) {
 			doc = {value: null};
 		}
@@ -26,12 +26,9 @@ module.exports = function (db, discord, cleverbot, usersDb, config){
 			if(err){
 				return console.log('rejected Discord key');
 			}
-			db.set(new Setting({key: DiscordbotSettingKey, value: key}));
-			registerMessages(db, discord, cleverbot);
-			registerWelcomeUsers(db, discord);
-			if(config.BotIsPlaying.StartOnLoad){
-				registerBotIsPlaying(discord, config).start();
-			}
+			settingsDb.set(new Setting({key: DiscordbotSettingKey, value: key}));
+			registerMessages(settingsDb, discord, cleverbot);
+			registerWelcomeUsers(settingsDb, discord);
 			return console.log('accepted Discord key');
 		});
 	});

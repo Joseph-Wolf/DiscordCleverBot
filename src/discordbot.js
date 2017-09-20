@@ -42,9 +42,10 @@ module.exports = class discord{
 			if (authorIsNotBot && botIsMentioned && expression.test(content)) { //send cleaned message to cleverbot
 				additionalParams.text = message.cleanContent.trim();
 				additionalParams.user = new User({name: 'dummy'}); //TODO: pass users to the callback incase they are needed
+				additionalParams.isAdmin = true; //TODO: pass if the requesting user is an admin or not
 				return callback(null, function(err, reply){
 					if(err){
-						return;
+						return message.reply(err); //Should be sanatized error message
 					}
 					return message.reply(reply);
 				}, additionalParams); //Execute the callback with the message

@@ -2,15 +2,11 @@
 
 const assert = require('assert');
 const fs = require('fs');
-const rimraf = require('rimraf');
 const path = require('path');
+const testUtils = require('../testUtils.js');
 const getRandomString = require('../../src/util/getRandomString.js');
 const data = require('../../src/db/data.js');
-const tmpDataPath = path.join('test','data');
 
-function generateDataFilePath(){
-	return path.join(tmpDataPath, getRandomString());
-}
 function getCount(db, doc, callback){
 	if(doc === null){
 		doc = {};
@@ -21,11 +17,11 @@ function getCount(db, doc, callback){
 describe('Data', function() {
 	describe('constructor', function() {
 		it('should create an object', function(done) {
-			let db = new data(generateDataFilePath(), done);
+			let db = new data(testUtils.generateDataFilePath(), done);
 			assert.ok(db);
 		});
 		it('should create a file', function(done){
-			let tmpPath = generateDataFilePath();
+			let tmpPath = testUtils.generateDataFilePath();
 			let db = new data(tmpPath, function(err){
 				if (err) {
 					done(err);
@@ -48,14 +44,14 @@ describe('Data', function() {
 	});
 	describe('path', function(){
 		it('should return passed path', function(done){
-			let tmpPath = generateDataFilePath();
+			let tmpPath = testUtils.generateDataFilePath();
 			let db = new data(tmpPath, done);
 			assert.equal(db.path, path.resolve(tmpPath));
 		});
 	});
 	describe('set/get', function(){
 		it('should set and retrieve a record', function(done){
-			let db = new data(generateDataFilePath());
+			let db = new data(testUtils.generateDataFilePath());
 			let keyString = getRandomString();
 			let valueString = getRandomString();
 			let record = {key: keyString, value: valueString};
@@ -75,7 +71,7 @@ describe('Data', function() {
 			});
 		});
 		it('should return passed record if one does not exist', function(done){
-			let db = new data(generateDataFilePath());
+			let db = new data(testUtils.generateDataFilePath());
 			let keyString = getRandomString();
 			let valueString = getRandomString();
 			let record = {key: keyString, value: valueString};
@@ -89,7 +85,7 @@ describe('Data', function() {
 			});
 		});
 		it('should update and retrieve a record', function(done){
-			let db = new data(generateDataFilePath());
+			let db = new data(testUtils.generateDataFilePath());
 			let keyString = getRandomString();
 			let valueString = getRandomString();
 			let valueString2 = getRandomString();
@@ -148,7 +144,7 @@ describe('Data', function() {
 					this.field2 = val;
 				}
 			}
-			let db = new data(generateDataFilePath());
+			let db = new data(testUtils.generateDataFilePath());
 			db.dataType = one;
 			db.set(new two('help'), function(err){
 				if(err){
@@ -165,7 +161,7 @@ describe('Data', function() {
 				}
 			}
 			let record = new one('hello');
-			let db = new data(generateDataFilePath());
+			let db = new data(testUtils.generateDataFilePath());
 			db.dataType = one;
 			db.set(record, function(err){
 				if(err) {
@@ -181,9 +177,5 @@ describe('Data', function() {
 			});
 		});
 	});
-	after(function(){
-		if (fs.existsSync(tmpDataPath)){
-			rimraf.sync(tmpDataPath);
-		}
-	});
+	after(testUtils.deleteTempDataPath);
 });

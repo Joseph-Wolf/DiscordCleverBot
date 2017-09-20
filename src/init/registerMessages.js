@@ -8,16 +8,18 @@ const cleverbotLogin = require('../messages/cleverbotLogin.js');
 const cleverbotAsk = require('../messages/cleverbotAsk.js');
 const currencyAdd = require('../messages/currencyAdd.js');
 const currencySubtract = require('../messages/currencySubtract.js');
+const currencyBallance = require('../messages/currencyBallance.js');
 const CurrencyNameSettingKey = 'CurrencyName';
 const CurrencyNameDefaultValue = 'onion';
 
-module.exports = function (db, discord, cleverbot, usersDb){
+module.exports = function (settingsDb, discord, cleverbot, usersDb){
 	discord.registerMessage(/show me/i, message.showMe);
 	discord.registerMessage(/choose/i, message.choose);
 	discord.registerMessage(/flip a coin/i, message.coinFlip);
 	discord.registerMessage(/fact[s]? about/i, message.getFact);
 	discord.registerMessage(/(auth|login).+?cleverbot/i, message.cleverbotLogin);
-	db.get({key: CurrencyNameSettingKey}, function(err, doc){
+	discord.registerMessage(/bal.+?of/i, message.currencyBallance, {db: usersDb});
+	settingsDb.get({key: CurrencyNameSettingKey}, function(err, doc){
 		if(err){
 			return;
 		}

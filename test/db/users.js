@@ -1,31 +1,24 @@
 "use strict";
 
 const assert = require('assert');
-const fs = require('fs');
-const rimraf = require('rimraf');
-const path = require('path');
+const testUtils = require('../testUtils.js');
 const data = require('../../src/db/users.js');
 const getRandomString = require('../../src/util/getRandomString.js');
 const User = require('../../src/db/class/user.js');
-const tmpDataPath = path.join('test','data');
-
-function generateDataFilePath(){
-	return path.join(tmpDataPath, getRandomString());
-}
 
 describe('users', function(){
 	describe('constructor', function(){
 		it('should return an object', function(done){
-			assert.ok(new data(generateDataFilePath(), done));
+			assert.ok(new data(testUtils.generateDataFilePath(), done));
 		});
 		it('should set dataType', function(done){
-			let db = new data(generateDataFilePath(), done);
+			let db = new data(testUtils.generateDataFilePath(), done);
 			assert.equal(db.dataType, User);
 		});
 	});
 	describe('set/get', function(){
 		it('should return a user for a get that does not exist', function(done){
-			let db = new data(generateDataFilePath());
+			let db = new data(testUtils.generateDataFilePath());
 			let user = new User({name: getRandomString()});
 			db.get(user, function(err, doc){
 				if(err){
@@ -38,7 +31,7 @@ describe('users', function(){
 			});
 		});
 		it('should get, set, and update a user', function(done){
-			let db = new data(generateDataFilePath());
+			let db = new data(testUtils.generateDataFilePath());
 			let user = new User({name: getRandomString(), money: 0});
 			db.set(user, function(err, newDoc){
 				if(err){
@@ -69,9 +62,5 @@ describe('users', function(){
 			});
 		});
 	});
-	after(function(){
-		if (fs.existsSync(tmpDataPath)){
-			rimraf.sync(tmpDataPath);
-		}
-	});
+	after(testUtils.deleteTempDataPath);
 });
