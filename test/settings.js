@@ -34,6 +34,20 @@ describe('Settings', function(){
 		});
 	});
 	describe('set/get', function(){
+		it('should return a setting for a get that does not exist', function(done){
+			let db = new data(generateDataFilePath());
+			let setting = new Setting({key: getRandomString(), value: getRandomString()});
+			db.get(setting, function(err, doc){
+				if(err){
+					return done(err);
+				}
+				assert.ok(doc);
+				assert.ok(doc instanceof Setting);
+				assert.equal(setting.key, doc.key);
+				assert.equal(setting.value, doc.value);
+				return done();
+			});
+		});
 		it('should get, set, and update a setting', function(done){
 			let db = new data(generateDataFilePath());
 			let setting = new Setting({key: getRandomString(), value: getRandomString()});

@@ -24,6 +24,19 @@ describe('users', function(){
 		});
 	});
 	describe('set/get', function(){
+		it('should return a user for a get that does not exist', function(done){
+			let db = new data(generateDataFilePath());
+			let user = new User({name: getRandomString()});
+			db.get(user, function(err, doc){
+				if(err){
+					return done(err);
+				}
+				assert.ok(doc);
+				assert.ok(doc instanceof User);
+				assert.equal(user.name, doc.name);
+				return done();
+			});
+		});
 		it('should get, set, and update a user', function(done){
 			let db = new data(generateDataFilePath());
 			let user = new User({name: getRandomString(), money: 0});

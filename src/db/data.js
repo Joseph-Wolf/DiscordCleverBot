@@ -49,6 +49,9 @@ module.exports = class Data {
 			if(err){
 				return callback(err);
 			}
+			if(doc === null || doc === undefined){
+				doc = data; //Return the same data back if it is not found
+			}
 			if(self.dataType !== null){
 				doc = new (self.dataType)(doc);
 			}

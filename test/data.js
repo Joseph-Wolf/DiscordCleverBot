@@ -66,12 +66,26 @@ describe('Data', function() {
 				db.get({key: record.key}, function(err, doc){
 					if(err){
 						return done(err);
-					} else {
-						assert.equal(doc.key, record.key);
-						assert.equal(doc.value, record.value);
-						return done();
 					}
+					assert.equal(doc.key, record.key);
+					assert.equal(doc.value, record.value);
+					assert.ok(doc._id); //should get an id added
+					return done();
 				});
+			});
+		});
+		it('should return passed record if one does not exist', function(done){
+			let db = new data(generateDataFilePath());
+			let keyString = getRandomString();
+			let valueString = getRandomString();
+			let record = {key: keyString, value: valueString};
+			db.get(record, function(err, doc){
+				if(err){
+					return done(err);
+				}
+				assert.equal(doc.key, record.key);
+				assert.equal(doc.value, record.value);
+				return done();
 			});
 		});
 		it('should update and retrieve a record', function(done){
@@ -92,32 +106,31 @@ describe('Data', function() {
 					db.get({key: record.key}, function(err, doc){
 						if(err){
 							return done(err);
-						} else {
-							assert.equal(doc.key, record.key);
-							assert.equal(doc.value, record.value);
-							getCount(db.db, {key: keyString}, function(err, count){
-								let count2 = count;
-								assert.equal(count1 + 1, count2);
-								db.set(record2, function(err, sameDoc){
+						}
+						assert.equal(doc.key, record.key);
+						assert.equal(doc.value, record.value);
+						getCount(db.db, {key: keyString}, function(err, count){
+							let count2 = count;
+							assert.equal(count1 + 1, count2);
+							db.set(record2, function(err, sameDoc){
+								if(err){
+									return done(err);
+								}
+								db.get({key: record.key}, function(err, doc){
 									if(err){
 										return done(err);
 									}
-									db.get({key: record.key}, function(err, doc){
+									assert.equal(doc.value, record2.value);
+									getCount(db.db, {key: keyString}, function(err, count){
 										if(err){
 											return done(err);
 										}
-										assert.equal(doc.value, record2.value);
-										getCount(db.db, {key: keyString}, function(err, count){
-											if(err){
-												return done(err);
-											}
-											assert.equal(count2, count);
-											return done();
-										})
-									});
+										assert.equal(count2, count);
+										return done();
+									})
 								});
 							});
-						}
+						});
 					});
 				});
 			});
@@ -139,10 +152,9 @@ describe('Data', function() {
 			db.dataType = one;
 			db.set(new two('help'), function(err){
 				if(err){
-					done();
-				} else {
-					done('Set incorect dataType');
+					return done();
 				}
+				return done('Set incorect dataType');
 			});
 		});
 		it('should return the correct dataType', function(done){
