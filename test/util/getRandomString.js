@@ -1,7 +1,7 @@
 "use strict";
 
 const assert = require('assert');
-const getRandomString = require('../src/util/getRandomString.js');
+const getRandomString = require('../../src/util/getRandomString.js');
 const numberOfTrials = 10;
 
 describe('GetRandomString', function(){

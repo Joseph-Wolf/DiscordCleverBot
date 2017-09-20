@@ -4,9 +4,9 @@ const assert = require('assert');
 const fs = require('fs');
 const rimraf = require('rimraf');
 const path = require('path');
-const getRandomString = require('../src/util/getRandomString.js');
-const data = require('../src/db/settings.js');
-const Setting = require('../src/db/class/setting.js');
+const getRandomString = require('../../src/util/getRandomString.js');
+const data = require('../../src/db/settings.js');
+const Setting = require('../../src/db/class/setting.js');
 const tmpDataPath = path.join('test','data');
 
 function generateDataFilePath(){

@@ -1,10 +1,10 @@
 "use strict";
 
 const assert = require('assert');
-const getRandomInt = require('../src/util/getRandomInt.js');
+const getRandomInt = require('../../src/util/getRandomInt.js');
 const numberOfTries = 10;
 
-describe('getRandomInt', function(){
+describe('getRandomIntInclusive', function(){
 	it('should return a number between specified range', function(){
 		let max = 10;
 		let min = -10;
@@ -12,8 +12,7 @@ describe('getRandomInt', function(){
 		for(index = 0; index < numberOfTries; index++){
 			let number = getRandomInt(min, max);
 			assert.ok(min <= number);
-			assert.ok(number < max);
-			assert.ok(number != max);
+			assert.ok(number <= max);
 		}
 	});
 	it('should swap the two if max < min', function(){
@@ -21,8 +20,7 @@ describe('getRandomInt', function(){
 		let min = -10;
 		let number = getRandomInt(max, min);
 		assert.ok(min <= number);
-		assert.ok(number < max);
-		assert.ok(number != max);
+		assert.ok(number <= max);
 	});
 	it('should return the number if max == min', function(){
 		let max = 10;

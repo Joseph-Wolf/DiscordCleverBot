@@ -1,7 +1,7 @@
 "use strict";
 
 const assert = require('assert');
-const User = require('../src/db/class/user.js');
+const User = require('../../../src/db/class/user.js');
 const NumberOfTrials = 10;
 
 describe('User', function(){
