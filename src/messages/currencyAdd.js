@@ -17,13 +17,10 @@ module.exports = function(err, callback, params){
 		if(err){
 			return callback('I encountered an error giving money to user');
 		}
-		console.log(doc);
-
 		//Add the money to the retrieved user
 		doc.addMoney(amount);
 		//Update the user
 		db.set(doc, function(err, doc){
-			console.log(doc);
 			if(err){
 				return callback('I encountered an error giving money to user');
 			}

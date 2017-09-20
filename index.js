@@ -5,6 +5,7 @@ const getConsoleInput = require('./src/util/getConsoleInput.js');
 const config = require('./config.json');
 const Settings = require('./src/db/settings.js');
 const Users = require('./src/db/users.js');
+const Setting = require('./src/db/class/settings.js');
 const choose = require('./src/util/choose.js');
 const message = {
 	choose: require('./src/messages/choose.js'),
@@ -59,26 +60,23 @@ settingsDb.get({key: 'CurrencyName'}, function(err, doc){
 	}
 	let CurrencyName = doc.value;
 	//Register currency commands
-	discord.registerMessage(new RegExp('[\\d]+[\\s]+' + currencyName + '[s]?[\\s]+(to)','i'), message.currencyAdd, {db: usersDb});
-	discord.registerMessage(new RegExp('[\\d]+[\\s]+' + currencyName + '[s]?[\\s]+(from)', 'i'), message.currencySubtract, {db: usersDb});
+	discord.registerMessage(new RegExp('[\\d]+[\\s]+' + CurrencyName + '[s]?[\\s]+(to)','i'), message.currencyAdd, {db: usersDb});
+	discord.registerMessage(new RegExp('[\\d]+[\\s]+' + CurrencyName + '[s]?[\\s]+(from)', 'i'), message.currencySubtract, {db: usersDb});
 });
 
 //Register cleverbot
 settingsDb.get({key: 'CleverbotToken'}, function(err, doc){
-		if(err || doc === null || doc.user === null || doc.value === null) {
-			return;
+	if(err || doc === null || doc.user === null || doc.value === null) {
+		return;
+	}
+	return cleverbot.authenticate(credentials, function(err, accepted){
+		if(err){
+			return console.log('rejected cleverbot credentials');
 		}
-		return cleverbot.authenticate(credentials, function(err, accepted){
-			if(err){
-				return console.log('rejected cleverbot credentials');
-			}
-			let data = keys.CleverbotKey;
-			data.user = accepted.user;
-			data.value = accepted.key;
-			settingsDb.set(data);
-			return console.log('accepted cleverbot credentials');
-		});
+		settingsDb.set(new Setting({key: 'CleverbotToken', value: accepted}));
+		return console.log('accepted cleverbot credentials');
 	});
+});
 
 //Register Discord
 function authenticateDiscordWithKey(key, callback){
@@ -99,9 +97,7 @@ settingsDb.get({key: 'DiscordToken'}, function(err, doc){
 		if(err){
 			return console.log('rejected Discord key');
 		}
-		let data = keys.DiscordKey;
-		data.value = key;
-		settingsDb.set(data);
+		settingsDb.set(new Setting({key: 'DiscordToken', value: key}));
 		if(config.BotIsPlaying.StartOnLoad){
 			BotIsPlaying.start();
 		}
