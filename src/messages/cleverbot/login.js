@@ -9,18 +9,28 @@ module.exports = function(err, callback, params){
 	let cleverbot = params.cleverbot;
 	let db = params.db;
 	let text = params.text;
-	let key = params.key;
 
 	let user = text.split(/:/)[0].match(/[\S]+$/)[0];
-	let token = text.split(/:/)[1].match(/^[\S]+/)[0];
+	let key = text.split(/:/)[1].match(/^[\S]+/)[0];
 	
 	//Will this work without a require?
-	cleverbot.authenticate({user: user,key: token}, function(err, accepted){
+	cleverbot.authenticate({user: user, key: key}, function(err, accepted){
 		if(err){
 			return callback('Failed to authenticate with provided credentials.\n(auth|login) cleverbot {user}:{token}');
 		}
-		db.set(new Setting({key: key, value: {user: accepted.user, value: accepted.value}}));
-		return callback(null, 'Success!!');
+		db.get({key: cleverbot.DBKey}, function(err, doc){
+			if(err){
+				doc = new Setting({key: cleverbot.DBKey});
+			}
+			doc.value = accepted;
+			db.set(doc, function(err, doc){
+			if(err){
+				console.error(err);
+				return callback("Error setting cleverbot credentials in the Database");
+			}
+			return callback(null, 'Success!!');
+		});
+		})
 	});
 	
 	//TODO: figure out how to delete the message for security

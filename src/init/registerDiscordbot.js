@@ -5,7 +5,6 @@ const registerWelcomeUsers = require('./registerWelcomeUsers.js');
 const registerMessages = require('./registerMessages.js');
 const registerBotIsPlaying = require('./registerBotIsPlaying.js');
 const Setting = require('../db/class/setting.js');
-const DiscordbotSettingKey = 'DiscordToken';
 
 function authenticateDiscordWithKey(key, discord, callback){
 	discord.authenticate(key, function(err, accepted){
@@ -26,7 +25,7 @@ function authenticateDiscordWithKey(key, discord, callback){
 	});
 }
 module.exports = function (settingsDb, discord, cleverbot, usersDb, config){
-	settingsDb.get({key: DiscordbotSettingKey}, function(err, doc){
+	settingsDb.get({key: discord.DBKey}, function(err, doc){
 		if(err || doc === null) {
 			doc = {value: null};
 		}
@@ -35,7 +34,7 @@ module.exports = function (settingsDb, discord, cleverbot, usersDb, config){
 				console.error('rejected Discord key');
 				return;
 			}
-			settingsDb.set(new Setting({key: DiscordbotSettingKey, value: key}));
+			settingsDb.set(new Setting({key: discord.DBKey, value: key}));
 			registerMessages(settingsDb, discord, cleverbot);
 			registerWelcomeUsers(settingsDb, discord);
 			return;

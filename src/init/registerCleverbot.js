@@ -1,17 +1,18 @@
 "use strict";
 
-const CleverbotSettingKey = 'CleverbotToken';
-
 module.exports = function (settingsDb, cleverbot){
-	settingsDb.get({key: CleverbotSettingKey}, function(err, doc){
-		if(err || doc === null || doc === undefined || doc.value === null || doc.value === undefined || doc.value.user === null || doc.value.user === undefined || doc.value.key === null || doc.value.key === undefined) {
+	settingsDb.get({key: cleverbot.DBKey}, function(err, doc){
+		if(err || doc === null || doc === undefined || doc.value === null || doc.value === undefined || doc.value.user === null || doc.value.user === undefined) {
 			return;
 		}
 		return cleverbot.authenticate(doc.value, function(err, accepted){
 			if(err){
-				return console.log('rejected cleverbot credentials');
+				console.log('rejected cleverbot credentials');
+				console.error(err);
+				return
 			}
-			return console.log('accepted cleverbot credentials');
+			console.log('accepted cleverbot credentials');
+			return
 		});
 	});
 }

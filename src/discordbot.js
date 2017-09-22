@@ -10,6 +10,7 @@ module.exports = class discord{
 		self.client.on('ready', () => { //display message to the console when up and running
 			console.log('I am ready!');
 		});
+		self.DBKey = 'DiscordToken';
 	}
 	authenticate(value, callback){
 		let self = this;
