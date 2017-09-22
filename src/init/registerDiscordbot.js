@@ -1,7 +1,6 @@
 "use strict";
 
 const prompt = require('prompt');
-const getConsoleInput = require('../util/getConsoleInput.js');
 const registerWelcomeUsers = require('./registerWelcomeUsers.js');
 const registerMessages = require('./registerMessages.js');
 const registerBotIsPlaying = require('./registerBotIsPlaying.js');
@@ -18,8 +17,10 @@ function authenticateDiscordWithKey(key, discord, callback){
 					console.error(err);
 					return 1;
 				}
-				authenticateDiscordWithKey(result[question], discord, callback)
+				authenticateDiscordWithKey(result[question], discord, callback);
+				return;
 			});
+			return;
 		}
 		return callback(null, accepted);
 	});
@@ -31,12 +32,13 @@ module.exports = function (settingsDb, discord, cleverbot, usersDb, config){
 		}
 		return authenticateDiscordWithKey(doc.value, discord, function(err, key){
 			if(err){
-				return console.log('rejected Discord key');
+				console.error('rejected Discord key');
+				return;
 			}
 			settingsDb.set(new Setting({key: DiscordbotSettingKey, value: key}));
 			registerMessages(settingsDb, discord, cleverbot);
 			registerWelcomeUsers(settingsDb, discord);
-			return console.log('accepted Discord key');
+			return;
 		});
 	});
 }

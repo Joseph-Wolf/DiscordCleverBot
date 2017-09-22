@@ -14,13 +14,14 @@ module.exports = class cbot{
 	ask(message, callback){
 		let self = this;
 		if(self.valid){
-			self.bot.create(function(err, response){
+			return self.bot.create(function(err, response){
 				if(err){
 					return callback(err);
 				}
 				return self.bot.ask(message, function(err, response){
 					if(err){
 						if(!cleverbot.isBroken){
+							console.error(err);
 							cleverbot.isBroken = true;
 							return callback('I am broken... (XuX)');
 						}
@@ -46,7 +47,7 @@ module.exports = class cbot{
 			}
 			self.valid = true;
 			self.bot.setNick(self.token); //set the nickname of the session
-			return callback(null, {user: user, key: key});
+			return callback(null, doc);
 		});
 	}
 }
