@@ -1,34 +1,25 @@
 "use strict";
 
+const catFact = require('cat-facts');
 const getFromURL = require('./getFromURL.js');
 
 module.exports = function(subject, callback) { 
 	let number = parseInt(subject.match(/[\d]+/));
-	let url;
-	let reply = callback;
+	let url = 'http://numbersapi.com/';
 	if (!Number.isInteger(number)) {
 		number = 'random'
 	}
 	try {
 		if(/cat/i.test(subject)) {
-			url = 'https://catfact.ninja/fact';
-			reply = function(err, data) {
-				if(err){
-					return callback(err);
-				} else if(data){
-					return callback(null, data.fact);
-				}
-				return callback('Reply was not in the expected format.');
-			}
+			return callback(null, catFact.random());
 		} else if (/year/i.test(subject)) {
-			url = 'http://numbersapi.com/' + number + '/year';
+			url = url + number + '/year';
 		} else if (/date/i.test(subject)) {
 			let matches = subject.match(/[\d]+/g);
 			let numberTwo;
 			if(matches !== null && matches.length >= 2){
 				numberTwo = parseInt(matches[1]);
 			}
-			url = 'http://numbersapi.com/';
 			if(number === 'random' || numberTwo === undefined || number > 12 || numberTwo > 32) { //try to make sure the date is simi accurate
 				url = url + 'random';
 			} else {
@@ -36,15 +27,15 @@ module.exports = function(subject, callback) {
 			}
 			url = url + '/date';
 		} else if (/trivia/i.test(subject)) {
-			url = 'http://numbersapi.com/' + number + '/trivia';
+			url = url + number + '/trivia';
 		} else if (/number/i.test(subject)) {
-			url = 'http://numbersapi.com/' + number + '/math';
+			url = url + number + '/math';
 		} else {
 			return callback(null, 'I have facts about cats, years, dates (month/day), numbers, and number trivia.');
 		}
-		getFromURL(url, reply);
+		getFromURL(url, callback);
 	} catch (e) {
-		console.log(e.message);
+		console.error(e.message);
 		return callback('I encountered an error getting the fact for you.');
 	}
 }

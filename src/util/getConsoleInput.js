@@ -7,6 +7,7 @@ module.exports = function(question, callback){
 
 	prompt.get(question, function (err, result) {
 		if (err) {
+			console.error(err);
 			return 1;
 		}
 		callback(result[question]);
