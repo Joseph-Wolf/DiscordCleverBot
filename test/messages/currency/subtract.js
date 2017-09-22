@@ -1,11 +1,11 @@
 "use strict";
 
 const assert = require('assert');
-const testUtils = require('../testUtils.js');
-const data = require('../../src/db/users.js');
-const getRandomString = require('../../src/util/getRandomString.js');
-const currencySubtractMessage = require('../../src/messages/currencySubtract.js');
-const User = require('../../src/db/class/user.js');
+const testUtils = require('../../testUtils.js');
+const data = require('../../../src/db/users.js');
+const getRandomString = require('../../../src/util/getRandomString.js');
+const currencySubtractMessage = require('../../../src/messages/currency/subtract.js');
+const User = require('../../../src/db/class/user.js');
 
 describe('Currency', function(){
 	describe('Subtract', function(){

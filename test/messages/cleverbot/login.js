@@ -1,13 +1,13 @@
 "use strict";
 
 const assert = require('assert');
-const cleverbot = require('../../src/cleverbot.js');
-const cleverbotAskMessage = require('../../src/messages/cleverbotAsk.js');
+const cleverbot = require('../../../src/cleverbot.js');
+const cleverbotLoginMessage = require('../../../src/messages/cleverbot/login.js');
 
 describe('Message', function(){
-	describe('Ask', function(){
+	describe('Login', function(){
 		it('should return sanatize error message', function(done){
-		cleverbotAskMessage(true, function(err, reply){
+		cleverbotLoginMessage(true, function(err, reply){
 			if(err){
 				return done();
 			}
@@ -15,7 +15,7 @@ describe('Message', function(){
 		});
 		});
 		it('should return error message for null text', function(done){
-			cleverbotAskMessage(null, function(err, reply){
+			cleverbotLoginMessage(null, function(err, reply){
 				if(err){
 					return done();
 				}
@@ -25,7 +25,7 @@ describe('Message', function(){
 		it('should return a reply', function(done){
 			let message = 'Please choose x, y, or z.';
 			let bot = new cleverbot();
-			cleverbotAskMessage(null, done, {text: message, cleverbot: bot})
+			cleverbotLoginMessage(null, done, {text: message, cleverbot: bot})
 		});
 	});
 });

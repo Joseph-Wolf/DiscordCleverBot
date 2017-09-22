@@ -1,11 +1,11 @@
 "use strict";
 
 const assert = require('assert');
-const cleverbot = require('../../src/cleverbot.js');
-const cleverbotAskMessage = require('../../src/messages/cleverbotAsk.js');
+const cleverbot = require('../../../src/cleverbot.js');
+const cleverbotAskMessage = require('../../../src/messages/cleverbot/ask.js');
 
 describe('Message', function(){
-	describe('Login', function(){
+	describe('Ask', function(){
 		it('should return sanatize error message', function(done){
 		cleverbotAskMessage(true, function(err, reply){
 			if(err){
