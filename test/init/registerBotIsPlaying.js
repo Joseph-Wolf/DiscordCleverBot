@@ -20,7 +20,7 @@ describe('registerBotIsPlaying', function(){
 		};
 		let job = registerBotIsPlaying(discord, config);
 
-		clock.tick(1000);
+		clock.tick(5000);
 		assert.ok(job.running);
 		job.stop();
 		clock.restore();

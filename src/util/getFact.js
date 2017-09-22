@@ -1,7 +1,8 @@
 "use strict";
 
 const catFact = require('cat-facts');
-const getFromURL = require('./getFromURL.js');
+const dogFacts = require('dog-facts');
+const request = require('request');
 
 module.exports = function(subject, callback) { 
 	let number = parseInt(subject.match(/[\d]+/));
@@ -12,6 +13,9 @@ module.exports = function(subject, callback) {
 	try {
 		if(/cat/i.test(subject)) {
 			return callback(null, catFact.random());
+		} 
+		else if(/dog/i.test(subject)) {
+			return callback(null, dogFacts.random());
 		} else if (/year/i.test(subject)) {
 			url = url + number + '/year';
 		} else if (/date/i.test(subject)) {
@@ -31,9 +35,19 @@ module.exports = function(subject, callback) {
 		} else if (/number/i.test(subject)) {
 			url = url + number + '/math';
 		} else {
-			return callback(null, 'I have facts about cats, years, dates (month/day), numbers, and number trivia.');
+			return callback(null, 'I have facts about cats, dogs, years, dates (month/day), numbers, and number trivia.');
 		}
-		getFromURL(url, callback);
+		request({ url: url }, function (err, response, body) {
+			if(err){
+				console.error(err);
+				return callback(err);
+			}
+			if(response.statusCode === 200){
+				return callback(null, body);
+			}
+			console.error('StatusCode: ' + response.statusCode);
+			return callback('StatusCode: ' + response.statusCode);
+		});
 	} catch (e) {
 		console.error(e.message);
 		return callback('I encountered an error getting the fact for you.');

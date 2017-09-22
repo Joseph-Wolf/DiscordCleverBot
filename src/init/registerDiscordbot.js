@@ -1,5 +1,6 @@
 "use strict";
 
+const prompt = require('prompt');
 const getConsoleInput = require('../util/getConsoleInput.js');
 const registerWelcomeUsers = require('./registerWelcomeUsers.js');
 const registerMessages = require('./registerMessages.js');
@@ -10,8 +11,14 @@ const DiscordbotSettingKey = 'DiscordToken';
 function authenticateDiscordWithKey(key, discord, callback){
 	discord.authenticate(key, function(err, accepted){
 		if(err){ //Loop until valid credentials are passed
-			return getConsoleInput('Discord Bot Key > ', function(answer) {
-				return authenticateDiscordWithKey(answer, discord, callback); //Loop until valid
+			let question = 'Discord Bot Key > ';
+			prompt.start();
+			prompt.get(question, function (err, result) {
+				if (err) {
+					console.error(err);
+					return 1;
+				}
+				authenticateDiscordWithKey(result[question], discord, callback)
 			});
 		}
 		return callback(null, accepted);

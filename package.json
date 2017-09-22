@@ -9,6 +9,7 @@
     "cleverbot.io": "CleverbotIO/node-cleverbot.io#8746180",
     "cron": "1.2.1",
     "discord.js": "^11.0.0",
+    "dog-facts": "^1.0.3",
     "is-invalid-path": "^0.1.0",
     "nedb": "^1.8.0",
     "path": "^0.12.7",

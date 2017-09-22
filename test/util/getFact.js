@@ -10,6 +10,11 @@ describe('getFact', function(){
 			getFact('cat', done);
 		});
 	});
+	describe('dogs', function(){
+		it('should return a random fact', function(done){
+			getFact('dogs', done);
+		});
+	});
 	describe('years', function(){
 		it('should return a random fact', function(done){
 			getFact('year', done);
