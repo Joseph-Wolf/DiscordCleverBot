@@ -20,11 +20,8 @@ module.exports = function (settingsDb, discord, cleverbot, usersDb){
 	discord.registerMessage(/(auth|login).+?cleverbot/i, message.cleverbotLogin);
 	discord.registerMessage(/bal.+?of/i, message.currencyBallance, {db: usersDb});
 	settingsDb.get({key: CurrencyNameSettingKey}, function(err, doc){
-		if(err){
-			return;
-		}
-		if(doc === null){ //set default currency if one is not provided
-			doc.value = CurrencyNameDefaultValue;
+		if(err || doc === null || doc === undefined){
+			doc = {value: CurrencyNameDefaultValue};
 		}
 		let CurrencyName = doc.value;
 		//Register currency commands
