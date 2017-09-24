@@ -15,11 +15,8 @@ module.exports = class discord{
 
 		self.client.on('message', message => {
 			let content = message.cleanContent.trim() //trim any excess spaces and make it a happy string
-			let authorId = message.author.id;
-			let botUser = self.client.user;
-			let botId = botUser.id;
-			let authorIsNotBot = authorId !== botId; //is the author the bot? don't want infinite loops
-			let botIsMentioned = message.isMentioned(botUser); //is the bot mentioned?
+			let authorIsNotBot = !message.author.bot; //is the author the bot? don't want infinite loops
+			let botIsMentioned = message.isMentioned(self.client.user); //is the bot mentioned?
 			if (authorIsNotBot && botIsMentioned) { //send cleaned message to cleverbot
 				let index = 0;
 				for(index = 0; index < self.registeredMessages.length; index++){
@@ -28,7 +25,7 @@ module.exports = class discord{
 					let additionalParams = self.registeredMessages[index].additionalParams;
 					if(expression.test(content)){
 						additionalParams.text = content;
-						let user = message.mentions.users.filter(obj => obj.id !== botId).first();
+						let user = message.mentions.users.filter(obj => !obj.bot).first();
 						if(user){
 							additionalParams.user = new User({discordId: user.id, name: user.toString()});
 						}
