@@ -3,8 +3,11 @@
 //TODO: how can I contact the user DB?
 
 module.exports = function(err, callback, params){
-	if(err || params === null || params === undefined || params.text === null || params.text === undefined || params.db === null || params.db === undefined || params.user === null || params.user === undefined){
+	if(err || params === null || params === undefined || params.text === null || params.text === undefined || params.db === null || params.db === undefined){
 		return callback('Error checking ballance');
+	}
+	if(params.user === null || params.user === undefined){
+		return callback('Please mention a user to check the ballance of');
 	}
 	let text = params.text;
 	let db = params.db;

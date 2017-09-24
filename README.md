@@ -19,7 +19,7 @@ This application requires the following API keys which can be modified via the p
 ## Development
 These items may be useful during development
 
-1. [Discord.js documentation](https://discord.js.org/#/docs/main/stable/general/welcome)
+1. [Discord.js documentation](https://discord.js.org/#/docs)
 2. [free Node.js hosting services](https://www.heroku.com)
 	* The Prodfile is only used for Heroku
 

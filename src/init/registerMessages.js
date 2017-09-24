@@ -25,11 +25,11 @@ module.exports = function (settingsDb, discord, cleverbot, usersDb){
 		if(err || doc === null || doc === undefined || doc.value === null || doc.value === undefined){
 			doc = {value: CurrencyNameDefaultValue};
 		}
-
 		let CurrencyName = doc.value;
 		//Register currency commands
 		discord.registerMessage(new RegExp('[\\d]+[\\s]+' + CurrencyName + '[s]?[\\s]+(to)','i'), currencyAdd, {db: usersDb});
 		discord.registerMessage(new RegExp('[\\d]+[\\s]+' + CurrencyName + '[s]?[\\s]+(from)', 'i'), currencySubtract, {db: usersDb});
+		discord.registerMessage(/./i, cleverbotAsk, {cleverbot: cleverbot}); //This needs to be added last
 	});
-	discord.registerMessage(/./i, cleverbotAsk, {cleverbot: cleverbot});
+	
 }
