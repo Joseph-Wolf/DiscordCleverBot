@@ -6,6 +6,7 @@ module.exports = function(err, callback, params){
 	}
 	let cleverbot = params.cleverbot;
 	let text = params.text;
+
 	cleverbot.ask(text, function(err, response){
 		if(err){
 			return callback(err); //return no reply on errors

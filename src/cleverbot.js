@@ -1,6 +1,6 @@
 "use strict";
 
-const cleverbot = require("cleverbot.io");
+const cleverbot = require('better-cleverbot-io');
 const getRandomInt = require('./util/getRandomInt.js');
 
 module.exports = class cbot{
@@ -15,40 +15,32 @@ module.exports = class cbot{
 	ask(message, callback){
 		let self = this;
 		if(self.valid){
-			return self.bot.create(function(err, response){
-				if(err){
-					return callback(err);
+			return self.bot.ask(message).then(response => {
+				if(response === undefined || response === null){ //If response is no good then ask again
+					return callback('What do you mean?');
 				}
-				return self.bot.ask(message, function(err, response){
-					if(err){
-						if(!cleverbot.isBroken){
-							console.error(err);
-							cleverbot.isBroken = true;
-							return callback('I am broken... (XuX)');
-						}
-						return callback(err); //If already replied with broken message don't keep replying
-					}
-					if(response === undefined || response === null){ //If response is no good then ask again
-						return callback('What do you mean?');
-					}
-					cleverbot.isBroken = false;
-					return callback(null, response);
-				});
+				cleverbot.isBroken = false;
+				return callback(null, response);
+			}).catch(err => {
+				console.error(err);
+				if(!self.isBroken){
+					self.isBroken = true;
+					return callback('I am broken... (XuX)');
+				}
+				return; //If already replied with broken message don't keep replying
 			});
 		}
 		return callback('Please set up credentials for Cleverbot feature.');
 	}
 	authenticate(doc, callback){
 		let self = this;
-		self.bot = new cleverbot(doc.user, doc.key);
-		self.bot.create(function(err, response){
-			if(err){ //will return false if there was an error
-				self.valid = false;
-				return callback(err);
-			}
+		self.bot = new cleverbot({user: doc.user, key: doc.key, nick: self.token});
+		self.bot.create().then(() => {
 			self.valid = true;
-			self.bot.setNick(self.token); //set the nickname of the session
 			return callback(null, doc);
+		}).catch(err => {
+			self.valid = false;
+			return callback(err);
 		});
 	}
 }

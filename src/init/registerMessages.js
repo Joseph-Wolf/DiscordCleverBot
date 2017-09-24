@@ -31,5 +31,5 @@ module.exports = function (settingsDb, discord, cleverbot, usersDb){
 		discord.registerMessage(new RegExp('[\\d]+[\\s]+' + CurrencyName + '[s]?[\\s]+(to)','i'), currencyAdd, {db: usersDb});
 		discord.registerMessage(new RegExp('[\\d]+[\\s]+' + CurrencyName + '[s]?[\\s]+(from)', 'i'), currencySubtract, {db: usersDb});
 	});
-	//discord.registerMessage(/./i, cleverbotAsk, {cleverbot: cleverbot});
+	discord.registerMessage(/./i, cleverbotAsk, {cleverbot: cleverbot});
 }

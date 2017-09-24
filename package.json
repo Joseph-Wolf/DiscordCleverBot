@@ -5,8 +5,8 @@
   "main": "index.js",
   "author": "Joseph Wolf",
   "dependencies": {
+    "better-cleverbot-io": "^1.0.2",
     "cat-facts": "^1.0.2",
-    "cleverbot.io": "CleverbotIO/node-cleverbot.io#8746180",
     "cron": "1.2.1",
     "discord.js": "^11.2.1",
     "dog-facts": "^1.0.3",
