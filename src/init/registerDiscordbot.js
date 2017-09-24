@@ -35,7 +35,7 @@ module.exports = function (settingsDb, discord, cleverbot, usersDb, config){
 				return;
 			}
 			settingsDb.set(new Setting({key: discord.DBKey, value: key}));
-			registerMessages(settingsDb, discord, cleverbot);
+			registerMessages(settingsDb, discord, cleverbot, usersDb);
 			registerWelcomeUsers(settingsDb, discord);
 			return;
 		});

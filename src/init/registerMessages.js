@@ -11,7 +11,7 @@ const currencySubtract = require('../messages/currency/subtract.js');
 const currencyBallance = require('../messages/currency/ballance.js');
 const currencySetName = require('../messages/currency/setName.js');
 const CurrencyNameSettingKey = 'CurrencyName';
-const CurrencyNameDefaultValue = 'onion';
+const CurrencyNameDefaultValue = 'crystals';
 
 module.exports = function (settingsDb, discord, cleverbot, usersDb){
 	discord.registerMessage(/show me/i, showMe);
@@ -20,15 +20,16 @@ module.exports = function (settingsDb, discord, cleverbot, usersDb){
 	discord.registerMessage(/fact[s]? about/i, getFact);
 	discord.registerMessage(/(auth|login).+?cleverbot/i, cleverbotLogin, {cleverbot: cleverbot, db: settingsDb});
 	discord.registerMessage(/bal.+?of/i, currencyBallance, {db: usersDb});
-	discord.registerMessage(/currency.+?name/i, currencySetName, {db: usersDb, key: CurrencyNameSettingKey});
+	discord.registerMessage(/currency.+?name/i, currencySetName, {db: settingsDb, key: CurrencyNameSettingKey});
 	settingsDb.get({key: CurrencyNameSettingKey}, function(err, doc){
-		if(err || doc === null || doc === undefined){
+		if(err || doc === null || doc === undefined || doc.value === null || doc.value === undefined){
 			doc = {value: CurrencyNameDefaultValue};
 		}
+
 		let CurrencyName = doc.value;
 		//Register currency commands
 		discord.registerMessage(new RegExp('[\\d]+[\\s]+' + CurrencyName + '[s]?[\\s]+(to)','i'), currencyAdd, {db: usersDb});
 		discord.registerMessage(new RegExp('[\\d]+[\\s]+' + CurrencyName + '[s]?[\\s]+(from)', 'i'), currencySubtract, {db: usersDb});
 	});
-	discord.registerMessage(/./i, cleverbotAsk, {cleverbot: cleverbot});
+	//discord.registerMessage(/./i, cleverbotAsk, {cleverbot: cleverbot});
 }

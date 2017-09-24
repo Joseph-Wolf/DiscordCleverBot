@@ -11,6 +11,7 @@ module.exports = class User{
 	constructor(user) {
 		let self = this;
 		self._id;
+		self.discordId;
 		self.name;
 		self.money = 0;
 		if(user === null || user === undefined){
@@ -18,6 +19,7 @@ module.exports = class User{
 		}
 		self._id = user._id;
 		self.name = user.name;
+		self.discordId = user.discordId;
 		if(isInteger(user.money) && isPositive(user.money)) {
 			self.money = user.money;
 		}

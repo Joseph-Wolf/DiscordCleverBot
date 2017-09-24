@@ -11,10 +11,11 @@ module.exports = function(err, callback, params){
 	let amount = parseInt(text.match(/[\d]+/));
 
 	//Get the user from the DB
-	db.get(user, function(err, doc){
+	db.get({discordId: user.discordId}, function(err, doc){
 		if(err){
 			return callback('I encountered an error giving money to user');
 		}
+		doc.name = user.name;
 		//Add the money to the retrieved user
 		doc.addMoney(amount);
 		//Update the user

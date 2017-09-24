@@ -42,7 +42,8 @@ module.exports = class discord{
 			let botIsMentioned = message.isMentioned(self.client.user); //is the bot mentioned?
 			if (authorIsNotBot && botIsMentioned && expression.test(content)) { //send cleaned message to cleverbot
 				additionalParams.text = message.cleanContent.trim();
-				additionalParams.user = new User({name: 'dummy'}); //TODO: pass users to the callback incase they are needed
+				let user = message.mentions.users.last();
+				additionalParams.user = new User({discordId: user.id, name: user.toString()});
 				additionalParams.isAdmin = true; //TODO: pass if the requesting user is an admin or not
 				return callback(null, function(err, reply){
 					if(err){
