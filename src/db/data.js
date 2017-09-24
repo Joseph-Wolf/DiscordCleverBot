@@ -36,7 +36,7 @@ module.exports = class Data {
 			if(err || doc === null){
 				return self.db.insert(data, callback);
 			}
-			return self.db.update(doc, data, {multi: false, returnUpdatedDocs: true}, function(err, count, newDoc){
+			return self.db.update({_id: data._id}, data, {multi: false, returnUpdatedDocs: true}, function(err, count, newDoc){
 				return callback(err, newDoc);
 			});
 		});

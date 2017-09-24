@@ -3,7 +3,7 @@
 const Setting = require('../../db/class/setting.js');
 
 module.exports = function(err, callback, params){
-	if(err || params === null || params === undefined || params.text === null || params.text === undefined || params.cleverbot === null || params.cleverbot === undefined || params.db === null || params.db === undefined || params.key === null || params.key === undefined){
+	if(err || params === null || params === undefined || params.text === null || params.text === undefined || params.cleverbot === null || params.cleverbot === undefined || params.db === null || params.db === undefined){
 		return callback('There was an error logging into cleverbot');
 	}
 	let cleverbot = params.cleverbot;
@@ -16,6 +16,7 @@ module.exports = function(err, callback, params){
 	//Will this work without a require?
 	cleverbot.authenticate({user: user, key: key}, function(err, accepted){
 		if(err){
+			console.error(err);
 			return callback('Failed to authenticate with provided credentials.\n(auth|login) cleverbot {user}:{token}');
 		}
 		db.get({key: cleverbot.DBKey}, function(err, doc){

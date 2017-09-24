@@ -19,20 +19,20 @@ describe('users', function(){
 	describe('set/get', function(){
 		it('should return a user for a get that does not exist', function(done){
 			let db = new data(testUtils.generateDataFilePath());
-			let user = new User({name: getRandomString()});
+			let user = new User({discordId: getRandomString()});
 			db.get(user, function(err, doc){
 				if(err){
 					return done(err);
 				}
 				assert.ok(doc);
 				assert.ok(doc instanceof User);
-				assert.equal(user.name, doc.name);
+				assert.equal(user.discordId, doc.discordId);
 				return done();
 			});
 		});
 		it('should get, set, and update a user', function(done){
 			let db = new data(testUtils.generateDataFilePath());
-			let user = new User({name: getRandomString(), money: 0});
+			let user = new User({discordId: getRandomString(), money: 0});
 			db.set(user, function(err, newDoc){
 				if(err){
 					return done(err);

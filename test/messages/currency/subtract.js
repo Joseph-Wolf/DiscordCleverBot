@@ -46,7 +46,7 @@ describe('Currency', function(){
 				let amountToTake = 55;
 				let expectedBallance = startingBallance - amountToTake;
 				let db = new data(testUtils.generateDataFilePath());
-				let user = new User({name: userId, money: startingBallance});
+				let user = new User({discordId: userId, name: userId, money: startingBallance});
 				let message = 'Please take ' + amountToTake + ' from ' + user.name;
 				db.set(user, function(err, doc){
 					if(err){

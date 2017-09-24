@@ -43,7 +43,7 @@ describe('Currency', function(){
 				let userId = getRandomString();
 				let startingAmount = 55;
 				let db = new data(testUtils.generateDataFilePath());
-				let user = new User({name: userId, money: startingAmount});
+				let user = new User({discordId: userId, name: userId, money: startingAmount});
 				let message = 'Please check the ballance of ' + user.name;
 				db.set(user, function(err, doc){
 					currencyBallanceMessage(null, function(err, reply){

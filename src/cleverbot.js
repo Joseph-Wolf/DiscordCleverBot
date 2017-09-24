@@ -8,7 +8,7 @@ module.exports = class cbot{
 		let self = this;
 		self.bot = null;
 		self.valid = false;
-		self.token = getRandomInt(Number.MIN_SAFE_INTEGER, Number.MAX_SAFE_INTEGER).toString();
+		self.token = getRandomInt(0, Number.MAX_SAFE_INTEGER).toString();
 		self.isBroken = false;
 		self.DBKey = 'CleverbotToken';
 	}

@@ -20,6 +20,9 @@ module.exports = class User{
 		self._id = user._id;
 		self.name = user.name;
 		self.discordId = user.discordId;
+		if(user.discordId === null || user.discordId === undefined){
+			self.discordId = self.name;
+		}
 		if(isInteger(user.money) && isPositive(user.money)) {
 			self.money = user.money;
 		}
