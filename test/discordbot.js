@@ -21,9 +21,9 @@ describe('discordbot', function(){
 	describe('registerMessage', function(){
 		it('should add messages', function(){
 			let bot = new discord();
-			let initialLength = getEventCount(bot);
+			let initialLength = bot.registeredMessages.length;
 			bot.registerMessage(/expression/, null);
-			let secondaryLength = getEventCount(bot);
+			let secondaryLength = bot.registeredMessages.length;
 			assert.equal(initialLength + 1, secondaryLength);
 		});
 		it('should execute callback on expression match', function(done){
@@ -35,9 +35,12 @@ describe('discordbot', function(){
 			bot.registerMessage(/yo/, function(){
 				done('called wrong message');
 			});
+			bot.registerMessage('/./', function(){
+				done('called second matching message');
+			});
 			//Mock the message
 			bot.client.user = {id: '1'}
-			let message = {cleanContent: 'hello world', author: {id: '2'}, isMentioned: function(){return true;}};
+			let message = {cleanContent: 'hello world', author: {id: '2'}, isMentioned: function(){return true;}, mentions: {users: {last: function(){return 'hi'}}}};
 			//Emit the message
 			bot.client.emit('message', message);
 		});
@@ -52,7 +55,7 @@ describe('discordbot', function(){
 			});
 			//Mock the message
 			bot.client.user = {id: '1'}
-			let message = {cleanContent: 'hello world', author: {id: '2'}, isMentioned: function(){return true;}};
+			let message = {cleanContent: 'hello world', author: {id: '2'}, isMentioned: function(){return true;}, mentions: {users: {last: function(){return 'hi'}}}};
 			//Emit the message
 			bot.client.emit('message', message);
 		});

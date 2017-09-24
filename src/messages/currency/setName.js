@@ -10,7 +10,7 @@ module.exports = function(err, callback, params){
 	let db = params.db;
 	let key = params.key;
 
-	let value = text.match(/[\S]+$/)[0];
+	let value = text.match(/[\S]+$/)[0].replace(/s$/i,'');
 
 	db.get({key: key}, function(err, doc){
 		if(err){ //Did not find the setting. Make a new one
@@ -21,7 +21,8 @@ module.exports = function(err, callback, params){
 			if(err){
 				return callback('Failed to update currency name in the database');
 			}
-			return callback(null, 'Success!!!');
+			//TODO: Reregister messages
+			return callback(null, 'I set your currency to ' + doc.value);
 		});
 	})
 };

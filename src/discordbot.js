@@ -10,7 +10,33 @@ module.exports = class discord{
 		self.client.on('ready', () => { //display message to the console when up and running
 			console.log('I am ready!');
 		});
+		self.registeredMessages = [];
 		self.DBKey = 'DiscordToken';
+
+		self.client.on('message', message => {
+			let content = message.cleanContent.trim() //trim any excess spaces and make it a happy string
+			let authorIsNotBot = message.author.id !== self.client.user.id; //is the author the bot? don't want infinite loops
+			let botIsMentioned = message.isMentioned(self.client.user); //is the bot mentioned?
+			let index = 0;
+			for(index = 0; index < self.registeredMessages.length; index++){
+				let expression = self.registeredMessages[index].expression;
+				let callback = self.registeredMessages[index].callback;
+				let additionalParams = self.registeredMessages[index].additionalParams;
+				if (authorIsNotBot && botIsMentioned && expression.test(content)) { //send cleaned message to cleverbot
+					additionalParams.text = message.cleanContent.trim();
+					let user = message.mentions.users.last();
+					additionalParams.user = new User({discordId: user.id, name: user.toString()});
+					additionalParams.isAdmin = true; //TODO: pass if the requesting user is an admin or not
+					return callback(null, function(err, reply){
+						if(err){
+							return message.reply(err); //Should be sanatized error message
+						}
+						return message.reply(reply);
+					}, additionalParams); //Execute the callback with the message
+				}
+			}
+			return; //Don't return the callback or else it will get used
+		});
 	}
 	authenticate(value, callback){
 		let self = this;
@@ -36,23 +62,6 @@ module.exports = class discord{
 		if(additionalParams === null || additionalParams === undefined){
 			additionalParams = {};
 		}
-		self.client.on('message', message => {
-			let content = message.cleanContent.trim() //trim any excess spaces and make it a happy string
-			let authorIsNotBot = message.author.id !== self.client.user.id; //is the author the bot? don't want infinite loops
-			let botIsMentioned = message.isMentioned(self.client.user); //is the bot mentioned?
-			if (authorIsNotBot && botIsMentioned && expression.test(content)) { //send cleaned message to cleverbot
-				additionalParams.text = message.cleanContent.trim();
-				let user = message.mentions.users.last();
-				additionalParams.user = new User({discordId: user.id, name: user.toString()});
-				additionalParams.isAdmin = true; //TODO: pass if the requesting user is an admin or not
-				return callback(null, function(err, reply){
-					if(err){
-						return message.reply(err); //Should be sanatized error message
-					}
-					return message.reply(reply);
-				}, additionalParams); //Execute the callback with the message
-			}
-			return; //Don't return the callback or else it will get used
-		});
+		self.registeredMessages.push({expression: expression, callback: callback, additionalParams});
 	}
 }
