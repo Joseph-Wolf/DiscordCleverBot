@@ -27,17 +27,23 @@ function authenticateDiscordWithKey(key, discord, callback){
 module.exports = function (settingsDb, discord, cleverbot, usersDb, config){
 	settingsDb.get({key: discord.DBKey}, function(err, doc){
 		if(err || doc === null) {
-			doc = {value: null};
+			doc = new Setting({key: discord.DBKey, value: null});
 		}
 		return authenticateDiscordWithKey(doc.value, discord, function(err, key){
 			if(err){
 				console.error('rejected Discord key');
 				return;
 			}
-			settingsDb.set(new Setting({key: discord.DBKey, value: key}));
-			registerMessages(settingsDb, discord, cleverbot, usersDb);
-			registerWelcomeUsers(settingsDb, discord);
-			return;
+			doc.value = key;
+			settingsDb.set(doc, function(err){
+				if(err){
+					console.error(err);
+					return;
+				}
+				registerMessages(settingsDb, discord, cleverbot, usersDb);
+				registerWelcomeUsers(settingsDb, discord);
+				return;
+			});
 		});
 	});
 }

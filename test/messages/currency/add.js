@@ -45,7 +45,7 @@ describe('Currency', function(){
 						assert.equal(expectedBallance, doc.money);
 						return done();
 					});
-				}, {text: message, db: db, user: user});
+				}, {text: message, db: db, user: user, isAdmin: true});
 			});
 		});
 	});

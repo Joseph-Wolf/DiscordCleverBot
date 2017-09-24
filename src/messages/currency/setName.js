@@ -6,9 +6,13 @@ module.exports = function(err, callback, params){
 	if(err || params === null || params === undefined || params.text === null || params.text === undefined || params.text.trim() === '' || params.db === null || params.db === undefined || params.key === null || params.key === undefined){
 		return callback('Unable to set the name of the currency');
 	}
+	if(!params.isAdmin){
+		return callback('You must be an administrator to use this command');
+	}
 	let text = params.text.trim();
 	let db = params.db;
 	let key = params.key;
+	let registerMessagesCallback = params.registerMessagesCallback;
 
 	let value = text.match(/[\S]+$/)[0].replace(/s$/i,'');
 
@@ -21,7 +25,9 @@ module.exports = function(err, callback, params){
 			if(err){
 				return callback('Failed to update currency name in the database');
 			}
-			//TODO: Reregister messages
+			if(registerMessagesCallback){ //Reset all the messages after changing something one of them depends on.
+				registerMessagesCallback();
+			}
 			return callback(null, 'I set your currency to ' + doc.value);
 		});
 	})

@@ -6,6 +6,9 @@ module.exports = function(err, callback, params){
 	if(err || params === null || params === undefined || params.text === null || params.text === undefined || params.cleverbot === null || params.cleverbot === undefined || params.db === null || params.db === undefined){
 		return callback('There was an error logging into cleverbot');
 	}
+	if(!params.isAdmin){
+		return callback('You must be an administrator to use this command');
+	}
 	let cleverbot = params.cleverbot;
 	let db = params.db;
 	let text = params.text;

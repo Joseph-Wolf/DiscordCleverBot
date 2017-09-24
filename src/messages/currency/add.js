@@ -1,12 +1,19 @@
 "use strict";
 
 module.exports = function(err, callback, params){
-	if(err || params === null || params === undefined || params.text === null || params.text === undefined || params.db === null || params.db === undefined || params.user === null || params.user === undefined){
+	if(err || params === null || params === undefined || params.text === null || params.text === undefined || params.db === null || params.db === undefined){
 		return callback('Error Adding currency');
+	}
+	if(!params.isAdmin){
+		return callback('You must be an administrator to use this command');
+	}
+	if(params.user === null || params.user === undefined){
+		return callback('Please mention a user');
 	}
 	let text = params.text;
 	let db = params.db;
 	let user = params.user;
+	let currencyName = params.currencyName;
 
 	let amount = parseInt(text.match(/[\d]+/));
 
@@ -23,7 +30,11 @@ module.exports = function(err, callback, params){
 			if(err){
 				return callback('I encountered an error giving money to user');
 			}
-			return callback(null, 'I gave ' + amount + ' to ' + doc.name);
+			let reply = 'I gave ' + amount + ' to ' + doc.name;
+			if(currencyName){
+				reply = 'I gave ' + amount + ' ' + currencyName + 's to ' + doc.name;
+			}
+			return callback(null, reply);
 		});
 	});
 }

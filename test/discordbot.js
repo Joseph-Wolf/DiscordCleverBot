@@ -2,6 +2,24 @@
 
 const assert = require('assert');
 const discord = require('../src/discordbot.js');
+let mockMessage = {
+	cleanContent: 'hello world',
+	author: {id: '2'},
+	isMentioned: function(){return true;},
+	mentions: {
+		users: {
+			filter: function(){
+				return this;
+			},
+			first: function(){return 'hi'}
+		}
+	},
+	member: {
+		hasPermission: function(){
+			return true;
+		}
+	}
+};
 
 function getEventCount(bot){
 	return bot.client._eventsCount;
@@ -40,7 +58,7 @@ describe('discordbot', function(){
 			});
 			//Mock the message
 			bot.client.user = {id: '1'}
-			let message = {cleanContent: 'hello world', author: {id: '2'}, isMentioned: function(){return true;}, mentions: {users: {last: function(){return 'hi'}}}};
+			let message = mockMessage;
 			//Emit the message
 			bot.client.emit('message', message);
 		});
@@ -55,7 +73,7 @@ describe('discordbot', function(){
 			});
 			//Mock the message
 			bot.client.user = {id: '1'}
-			let message = {cleanContent: 'hello world', author: {id: '2'}, isMentioned: function(){return true;}, mentions: {users: {last: function(){return 'hi'}}}};
+			let message = mockMessage;
 			//Emit the message
 			bot.client.emit('message', message);
 		});
