@@ -1,8 +1,8 @@
 {
-	"BotIsPlaying": {
-		"TicksPerMinute": "7",
-		"StartOnLoad": "true",
-		"Options": [
+	"botIsPlaying": {
+		"cronTime": "*/5 * * * *",
+		"start": "true",
+		"options": [
 		"the trading post",
 		"Quaggan Escort",
 		"guild missions",
