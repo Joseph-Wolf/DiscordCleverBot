@@ -13,6 +13,7 @@ module.exports = function(err, callback, params){
 	let text = params.text;
 	let db = params.db;
 	let user = params.user;
+	let currencyName = params.currencyName;
 
 	let amount = parseInt(text.match(/[\d]+/));
 
@@ -29,7 +30,11 @@ module.exports = function(err, callback, params){
 			if(err){
 				return callback('I encountered an error giving money to user');
 			}
-			return callback(null, 'I gave ' + amount + ' to ' + doc.name);
+			let reply = 'I gave ' + amount + ' to ' + doc.name;
+			if(currencyName){
+				reply = 'I gave ' + amount + ' ' + currencyName + 's to ' + doc.name;
+			}
+			return callback(null, reply);
 		});
 	});
 }

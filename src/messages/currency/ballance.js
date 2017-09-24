@@ -12,6 +12,7 @@ module.exports = function(err, callback, params){
 	let text = params.text;
 	let db = params.db;
 	let user = params.user;
+	let currencyName = params.currencyName;
 
 	let amount = parseInt(text.match(/[\d]+/));
 
@@ -24,6 +25,10 @@ module.exports = function(err, callback, params){
 			return callback('I did not find that user.');
 		}
 		//Add the money to the retrieved user
-		return callback(null, doc.name + ' has a ballance of ' + doc.money);
+		let reply = doc.name + ' has a ballance of ' + doc.money;
+		if(currencyName){
+			reply = doc.name + ' has ' + doc.money + ' ' + currencyName + 's';
+		}
+		return callback(null, reply);
 	});
 }

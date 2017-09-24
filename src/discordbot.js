@@ -68,4 +68,8 @@ module.exports = class discord{
 		}
 		self.registeredMessages.push({expression: expression, callback: callback, additionalParams});
 	}
+	clearMessages(){
+		let self = this;
+		self.registeredMessages = [];
+	}
 }
