@@ -1,6 +1,6 @@
 {
 	"botIsPlaying": {
-		"cronTime": "`*/5 * * * *`",
+		"cronTime": "*/5 * * * *",
 		"start": "true",
 		"options": [
 		"the trading post",

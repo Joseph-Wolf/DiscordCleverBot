@@ -7,5 +7,5 @@ const registerBotIsPlaying = require('./init/registerBotIsPlaying.js');
 module.exports = function(settingsDb, usersDb, discord, cleverbot, config){
 	registerCleverbot(settingsDb, cleverbot);
 	registerDiscordbot(settingsDb, discord, cleverbot, usersDb);
-	registerBotIsPlaying(discord, config.BotIsPlaying);
+	registerBotIsPlaying(discord, config.botIsPlaying);
 };
