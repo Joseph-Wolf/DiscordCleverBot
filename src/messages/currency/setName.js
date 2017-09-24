@@ -6,6 +6,9 @@ module.exports = function(err, callback, params){
 	if(err || params === null || params === undefined || params.text === null || params.text === undefined || params.text.trim() === '' || params.db === null || params.db === undefined || params.key === null || params.key === undefined){
 		return callback('Unable to set the name of the currency');
 	}
+	if(!params.isAdmin){
+		return callback('You must be an administrator to use this command');
+	}
 	let text = params.text.trim();
 	let db = params.db;
 	let key = params.key;

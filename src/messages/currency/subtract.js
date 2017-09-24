@@ -4,6 +4,9 @@ module.exports = function(err, callback, params){
 	if(err || params === null || params === undefined || params.text === null || params.text === undefined || params.db === null || params.db === undefined){
 		return callback('Error Subtracting currency');
 	}
+	if(!params.isAdmin){
+		return callback('You must be an administrator to use this command');
+	}
 	if(params.user === null || params.user === undefined){
 		return callback('Please mention a user');
 	}

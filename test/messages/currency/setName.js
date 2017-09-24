@@ -26,7 +26,12 @@ describe('Currency', function(){
 						if(err){
 							return setName(null, function(err){
 								if(err){
-									return setName(null, done, {text: expected, db: db, key: key})
+									return setName(null, function(err){
+										if(err){
+											return setName(null, done, {text: expected, db: db, key: key, isAdmin: true})
+										}
+										return done('Should be an admin');
+									}, {text: expected, db: db, key: key})
 								}
 								return done('Should require currency name key');
 							}, {text: expected, db: db});
@@ -46,7 +51,7 @@ describe('Currency', function(){
 					return done();
 				}
 				return done('Should have returned an error if there is no last word.');
-			}, {text: message, db: db, key: key});
+			}, {text: message, db: db, key: key, isAdmin: true});
 		});
 		it('should trim any trailing s characters', function(done){
 			let expected = 'crystal';
@@ -65,7 +70,7 @@ describe('Currency', function(){
 					assert.equal(expected, doc.value);
 					return done();
 				});
-			}, {text: message, db: db, key: key});
+			}, {text: message, db: db, key: key, isAdmin: true});
 		});
 		it('should set valid name in the database', function(done){
 			let expected = getRandomString();
@@ -84,7 +89,7 @@ describe('Currency', function(){
 					assert.equal(expected, doc.value);
 					return done();
 				});
-			}, {text: message, db: db, key: key});
+			}, {text: message, db: db, key: key, isAdmin: true});
 		});
 	});
 	after(testUtils.deleteTempDataPath);

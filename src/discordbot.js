@@ -29,7 +29,7 @@ module.exports = class discord{
 						if(user){
 							additionalParams.user = new User({discordId: user.id, name: user.toString()});
 						}
-						additionalParams.isAdmin = true; //TODO: pass if the requesting user is an admin or not
+						additionalParams.isAdmin = message.member.hasPermission('ADMINISTRATOR');
 						return callback(null, function(err, reply){
 							if(err){
 								return message.reply(err); //Should be sanatized error message
