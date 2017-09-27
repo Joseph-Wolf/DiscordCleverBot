@@ -94,9 +94,9 @@ describe('discordbot', function(){
 			assert.equal(initialLength, secondaryLength);
 		});
 	});
-	/*TODO: fix
+	//TODO: fix
 	describe('authenticate', function(){
-		it('should fail to authenticate garbage key', function(done){
+		it.skip('should fail to authenticate garbage key', function(done){
 			let bot = new discord();
 			let key = 'garbage';
 			bot.authenticate(key, function(err, accepted){
@@ -106,12 +106,11 @@ describe('discordbot', function(){
 				return done('Invalid Discord key did not fail');
 			});
 		});
-		it('should authenticate valid key', function(done){
+		it.skip('should authenticate valid key', function(done){
 			let bot = new discord();
 			//TODO: find a way to insert a valid key without saving it in source control.
 			let key = 'validKey';
 			bot.authenticate(key, done);
 		});
 	});
-*/
 });
