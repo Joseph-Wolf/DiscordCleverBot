@@ -1,13 +1,18 @@
 "use strict";
 
 const assert = require('assert');
+const data = require('nedb');
 const testUtils = require('../../testUtils.js');
-const data = require('../../../src/db/users.js');
 const getRandomString = require('../../../src/util/getRandomString.js');
 const currencySubtractMessage = require('../../../src/messages/currency/subtract.js');
-const User = require('../../../src/db/class/user.js');
+
+let db = null;
 
 describe('Currency', function(){
+	before(function (done) {
+		let dbFilename = testUtils.generateDataFilePath();
+		db = new data({filename: dbFilename, autoload: true, onload: done});
+	});
 	describe('Subtract', function(){
 		describe('Message', function(){
 			it('should return sanatize error message', function(done){
@@ -30,8 +35,7 @@ describe('Currency', function(){
 				let userId = getRandomString();
 				let startingBallance = 54;
 				let amountToTake = 55;
-				let db = new data(testUtils.generateDataFilePath());
-				let user = new User({name: userId, money: startingBallance});
+				let user = {discordId: userId, name: userId, money: startingBallance};
 				let message = 'Please take ' + amountToTake + ' from ' + user.name;
 				currencySubtractMessage(null, function(err, ballance){
 					if(err){
@@ -45,10 +49,9 @@ describe('Currency', function(){
 				let startingBallance = 66;
 				let amountToTake = 55;
 				let expectedBallance = startingBallance - amountToTake;
-				let db = new data(testUtils.generateDataFilePath());
-				let user = new User({discordId: userId, name: userId, money: startingBallance});
+				let user = {discordId: userId, name: userId, money: startingBallance};
 				let message = 'Please take ' + amountToTake + ' from ' + user.name;
-				db.set(user, function(err, doc){
+				db.insert(user, function(err, doc){
 					if(err){
 						return done(err);
 					}
@@ -56,7 +59,7 @@ describe('Currency', function(){
 						if(err){
 							return done(err);
 						}
-						db.get({_id: doc._id}, function(err, doc){
+						db.findOne({_id: doc._id}, function(err, doc){
 							if(err){
 								return done(err);
 							}

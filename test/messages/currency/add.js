@@ -1,13 +1,18 @@
 "use strict";
 
 const assert = require('assert');
+const data = require('nedb');
 const testUtils = require('../../testUtils.js');
-const data = require('../../../src/db/users.js');
 const getRandomString = require('../../../src/util/getRandomString.js');
 const currencyAddMessage = require('../../../src/messages/currency/add.js');
-const User = require('../../../src/db/class/user.js');
+
+let db = null;
 
 describe('Currency', function(){
+	before(function (done) {
+		let dbFilename = testUtils.generateDataFilePath();
+		db = new data({filename: dbFilename, autoload: true, onload: done});
+	});
 	describe('Add', function(){
 		describe('Message', function(){
 			it('should return sanatize error message', function(done){
@@ -28,8 +33,7 @@ describe('Currency', function(){
 			});
 			it('should return a reply', function(done){
 				let userId = getRandomString();
-				let db = new data(testUtils.generateDataFilePath());
-				let user = new User({name: userId});
+				let user = {discordId: userId, name: 'name', money: 0};
 				let startingBallance = user.money;
 				let amountToAdd = 22;
 				let expectedBallance = startingBallance + amountToAdd;
@@ -38,7 +42,7 @@ describe('Currency', function(){
 					if(err){
 						return done(err);
 					}
-					db.get({name: user.name}, function(err, doc){
+					db.findOne({name: user.name}, function(err, doc){
 						if(err){
 							return done(err);
 						}

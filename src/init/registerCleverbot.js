@@ -1,7 +1,7 @@
 "use strict";
 
-module.exports = function (settingsDb, cleverbot){
-	settingsDb.get({key: cleverbot.DBKey}, function(err, doc){
+module.exports = function (db, cleverbot){
+	db.get({key: cleverbot.DBKey}, function(err, doc){
 		if(err || doc === null || doc === undefined || doc.value === null || doc.value === undefined || doc.value.user === null || doc.value.user === undefined) {
 			return;
 		}

@@ -1,12 +1,18 @@
 "use strict";
 
 const assert = require('assert');
+const data = require('nedb');
 const testUtils = require('../../testUtils.js');
 const setName = require('../../../src/messages/currency/setName.js');
 const getRandomString = require('../../../src/util/getRandomString.js');
-const data = require('../../../src/db/settings.js');
+
+let db = null;
 
 describe('Currency', function(){
+	before(function (done) {
+		let dbFilename = testUtils.generateDataFilePath();
+		db = new data({filename: dbFilename, autoload: true, onload: done});
+	});
 	describe('setName', function(){
 		it('should return a friendly error if an error is passed to it', function(done){
 			setName(true, function(err){
@@ -19,7 +25,6 @@ describe('Currency', function(){
 		it('should require expected parameters', function(done){
 			let expected = getRandomString();
 			let key = getRandomString();
-			let db = new data(testUtils.generateDataFilePath());
 			setName(null, function(err){
 				if(err){
 					return setName(null, function(err){
@@ -45,7 +50,6 @@ describe('Currency', function(){
 		it('should ignore empty text', function(done){
 			let message = '        ';
 			let key = getRandomString();
-			let db = new data(testUtils.generateDataFilePath());
 			setName(null, function(err, reply){
 				if(err){
 					return done();
@@ -57,12 +61,11 @@ describe('Currency', function(){
 			let expected = 'crystal';
 			let message = 'set currency name to ' + expected + 's';
 			let key = getRandomString();
-			let db = new data(testUtils.generateDataFilePath());
 			setName(null, function(err, reply){
 				if(err){
 					return done(err);
 				}
-				db.get({key: key}, function(err, doc){
+				db.findOne({key: key}, function(err, doc){
 					if(err){
 						return done(err);
 					}
@@ -76,12 +79,11 @@ describe('Currency', function(){
 			let expected = getRandomString();
 			let message = 'set currency name to ' + expected;
 			let key = getRandomString();
-			let db = new data(testUtils.generateDataFilePath());
 			setName(null, function(err, reply){
 				if(err){
 					return done(err);
 				}
-				db.get({key: key}, function(err, doc){
+				db.findOne({key: key}, function(err, doc){
 					if(err){
 						return done(err);
 					}

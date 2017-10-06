@@ -1,7 +1,6 @@
 "use strict";
 
 const Discord = require('discord.js');
-const User = require('./db/class/user.js');
 
 module.exports = class discord{
 	constructor(){
@@ -27,7 +26,7 @@ module.exports = class discord{
 						additionalParams.text = content;
 						let user = message.mentions.users.filter(obj => !obj.bot).first();
 						if(user){
-							additionalParams.user = new User({discordId: user.id, name: user.toString()});
+							additionalParams.user = {discordId: user.id, name: user.toString()};
 						}
 						additionalParams.isAdmin = message.member.hasPermission('ADMINISTRATOR');
 						return callback(null, function(err, reply){

@@ -1,5 +1,7 @@
 "use strict";
 
+const isPositiveInteger = require('../../util/isPositiveInteger.js');
+
 module.exports = function(err, callback, params){
 	if(err || params === null || params === undefined || params.text === null || params.text === undefined || params.db === null || params.db === undefined){
 		return callback('Error Adding currency');
@@ -11,30 +13,31 @@ module.exports = function(err, callback, params){
 		return callback('Please mention a user');
 	}
 	let text = params.text;
-	let db = params.db;
 	let user = params.user;
+	let db = params.db;
 	let currencyName = params.currencyName;
 
 	let amount = parseInt(text.match(/[\d]+/));
 
+	if(!isPositiveInteger(amount)){
+		return callback('Invalid amount passed.');
+	}
 	//Get the user from the DB
-	db.get({discordId: user.discordId}, function(err, doc){
-		if(err){
-			return callback('I encountered an error giving money to user');
+	db.find({discordId: user.discordId}, function(err, docs){
+		if(err || docs === null || docs === undefined || docs.length === 0){ //If user was not found insert it
+			return db.insert({discordId: user.discordId, name: user.name, money: amount}, function(err, doc){
+				if(err){
+					return callback('I encountered an error adding currency to users');
+				}
+				return callback(null, 'I added ' + amount + ' ' + currencyName + ' to ' + doc.name);
+			});
 		}
-		doc.name = user.name;
 		//Add the money to the retrieved user
-		doc.addMoney(amount);
-		//Update the user
-		db.set(doc, function(err, doc){
+		return db.update(docs, {$inc: {money: amount}}, { upsert: true, multi: true }, function(err, count, docs){
 			if(err){
-				return callback('I encountered an error giving money to user');
+				return callback('I encountered an error adding currency to users');
 			}
-			let reply = 'I gave ' + amount + ' to ' + doc.name;
-			if(currencyName){
-				reply = 'I gave ' + amount + ' ' + currencyName + 's to ' + doc.name;
-			}
-			return callback(null, reply);
+			return callback(null, 'I added ' + amount + ' ' + currencyName + ' to user'); //TODO: print all user names
 		});
 	});
 }
