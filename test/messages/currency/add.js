@@ -42,14 +42,41 @@ describe('Currency', function(){
 					if(err){
 						return done(err);
 					}
-					db.findOne({name: user.name}, function(err, doc){
+					db.find({name: user.name}).limit(1).exec(function(err, docs){
 						if(err){
 							return done(err);
 						}
+						let doc = docs[0];
 						assert.equal(expectedBallance, doc.money);
 						return done();
 					});
 				}, {text: message, db: db, user: user, isAdmin: true});
+			});
+			it('should add money to existing user', function(done){
+				let userId = getRandomString();
+				let user = {discordId: userId, name: 'name', money: 0};
+				let startingBallance = user.money;
+				let amountToAdd = 22;
+				let expectedBallance = startingBallance + amountToAdd;
+				let message = 'Please give ' + amountToAdd + ' to ' + user.name;
+				db.insert(user, function(err, doc){
+					if(err){
+						return done(err);
+					}
+					currencyAddMessage(null, function(err){
+						if(err){
+							return done(err);
+						}
+						db.find({name: user.name}).limit(1).exec(function(err, docs){
+							if(err){
+								return done(err);
+							}
+							let doc = docs[0];
+							assert.equal(expectedBallance, doc.money);
+							return done();
+						});
+					}, {text: message, db: db, user: user, isAdmin: true});
+				});
 			});
 		});
 	});

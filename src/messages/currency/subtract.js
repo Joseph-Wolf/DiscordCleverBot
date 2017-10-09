@@ -19,33 +19,32 @@ module.exports = function(err, callback, params){
 
 	let amount = parseInt(text.match(/[\d]+/));
 
-	if(isPositiveInteger(amount)){
+	if(!isPositiveInteger(amount)){
 		return callback('Invalid amount passed.');
 	}
 
 	//Get the users from the DB
 	db.find({discordId: user.discordId}, function(err, docs){ //TODO: iterate for many users and concatenate the reply
 		if(err || docs === null || docs === undefined || docs.length === 0){
-			return callback('I encountered an error giving money to user');
+			return callback('I encountered an error taking money from user');
 		}
 		//Subtract the money to the retrieved user
-		let reply = '';
 		let index = 0;
 		for(index = 0; index < docs.length; index++){
 			let user = docs[index];
 			if(user.money < amount){
-				reply = reply + user.name + ' has Insufficient funds.';
-				docs[index] = null; //Remove invalid user from selection
+				return callback(user.name + ' has Insufficient funds');
 			}
 		}
-		db.update(docs, {$inc: {money: -amount}}, { upsert: true, multi: true }, function(err, count, docs){
+		db.update({ $or: docs }, {$inc: {money: -amount}}, { multi: true, returnUpdatedDocs: true }, function(err, count, docs){
 			if(err || docs === null || docs === undefined || docs.length === 0){
 				return callback('I encountered an error taking money to user');
 			}
+			let reply = 'I took ' + amount + ' ' + currencyName + 's from ';
 			let index = 0;
 			for(index = 0; index < docs.length; index++){
 				let user = docs[index];
-				reply = reply + 'I took ' + amount + ' ' + currencyName + 's from ' + user.name
+				reply = reply + (index > 0 ? ', ' : '') + user.name;
 			}
 			return callback(null, reply);
 		});

@@ -19,9 +19,11 @@ module.exports = function(err, callback, params){
 			console.error(err);
 			return callback('Failed to authenticate with provided credentials.\n(auth|login) cleverbot {user}:{token}');
 		}
-		return data.findOne({key: cleverbot.DBKey}, function(err, doc){
-			if(err || doc === null || doc === undefined){
-				return data.insert({key: cleverbot.DBKey, value: accepted}, function(err, doc){
+		let query = {key: cleverbot.DBKey};
+		return data.find(query).limit(1).exec(function(err, doc){
+			if(err || doc === null || doc === undefined || doc.length === 0){
+				query.value = accepted;
+				return data.insert(query, function(err, doc){
 					if(err){
 						console.error(err);
 						return callback("Error setting cleverbot credentials in the Database");
@@ -29,7 +31,7 @@ module.exports = function(err, callback, params){
 					return callback(null, 'Success!!');
 				});
 			}
-			return data.update(doc, {$set: {value: accepted}}, function(err, doc){
+			return data.update(doc[0], {$set: {value: accepted}}, function(err, doc){
 				if(err){
 					console.error(err);
 					return callback("Error setting cleverbot credentials in the Database");

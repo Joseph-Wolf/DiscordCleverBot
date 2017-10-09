@@ -33,11 +33,17 @@ module.exports = function(err, callback, params){
 			});
 		}
 		//Add the money to the retrieved user
-		return db.update(docs, {$inc: {money: amount}}, { upsert: true, multi: true }, function(err, count, docs){
+		return db.update({ $or: docs}, {$inc: {money: amount}}, { upsert: true, multi: true, returnUpdatedDocs: true }, function(err, count, docs){
 			if(err){
 				return callback('I encountered an error adding currency to users');
 			}
-			return callback(null, 'I added ' + amount + ' ' + currencyName + ' to user'); //TODO: print all user names
+			let reply = 'I added ' + amount + ' ' + currencyName + ' to ';
+			let index = 0;
+			for(index = 0; index < docs.length; index++){
+				let user = docs[index];
+				reply = reply + (index > 0 ? ', ' : '') + user.name;
+			}
+			return callback(null, reply); //TODO: print all user names
 		});
 	});
 }

@@ -60,38 +60,37 @@ describe('Currency', function(){
 		it('should trim any trailing s characters', function(done){
 			let expected = 'crystal';
 			let message = 'set currency name to ' + expected + 's';
-			let key = getRandomString();
+			let query = {key: getRandomString()};
 			setName(null, function(err, reply){
 				if(err){
 					return done(err);
 				}
-				db.findOne({key: key}, function(err, doc){
+				db.find(query).limit(1).exec(function(err, doc){
 					if(err){
 						return done(err);
 					}
-					assert.ok(doc);
-					assert.equal(expected, doc.value);
+					assert.equal(expected, doc[0].value);
 					return done();
 				});
-			}, {text: message, db: db, key: key, isAdmin: true});
+			}, {text: message, db: db, key: query.key, isAdmin: true});
 		});
 		it('should set valid name in the database', function(done){
 			let expected = getRandomString();
 			let message = 'set currency name to ' + expected;
-			let key = getRandomString();
+			let query = {key: getRandomString()}
 			setName(null, function(err, reply){
 				if(err){
 					return done(err);
 				}
-				db.findOne({key: key}, function(err, doc){
+				db.find(query).limit(1).exec(function(err, doc){
 					if(err){
 						return done(err);
 					}
 					assert.ok(doc);
-					assert.equal(expected, doc.value);
+					assert.equal(expected, doc[0].value);
 					return done();
 				});
-			}, {text: message, db: db, key: key, isAdmin: true});
+			}, {text: message, db: db, key: query.key, isAdmin: true});
 		});
 	});
 	after(testUtils.deleteTempDataPath);

@@ -8,32 +8,33 @@ module.exports = function(err, callback, params){
 		return callback('You must be an administrator to use this command');
 	}
 	let text = params.text.trim();
-	let key = params.key;
+	let name = params.key;
 	let db = params.db;
 	let registerMessagesCallback = params.registerMessagesCallback;
 
 	let value = text.match(/[\S]+$/)[0].replace(/s$/i,'');
-
-	db.findOne({key: key}, function(err, doc){
-		if(err || doc === undefined || doc === null){ //Did not find the setting. Make a new one
-			db.insert({key: key, value: value}, function(err, doc){
+	let query = {key: name};
+	db.find(query).limit(1).exec(function(err, doc){
+		if(err || doc === undefined || doc === null || doc.length === 0){ //Did not find the setting. Make a new one
+			query.value = value;
+			return db.insert(query, function(err){
 				if(err){
 					return callback('Failed to insert currency name into the database');
 				}
 				if(registerMessagesCallback){ //Reset all the messages after changing something one of them depends on.
 					registerMessagesCallback();
 				}
-				return callback(null, 'I set your currency to ' + doc.value);
+				return callback(null, 'I set your currency to ' + value);
 			});
 		}
-		db.update(doc, {$set:{value: value}}, function(err, doc){
+		return db.update(doc, { $set: { value: value } }, { multi: false }, function(err){
 			if(err){
 				return callback('Failed to update currency name');
 			}
 			if(registerMessagesCallback){ //Reset all the messages after changing something one of them depends on.
 				registerMessagesCallback();
 			}
-			return callback(null, 'I set your currency to ' + doc.value);
+			return callback(null, 'I set your currency to ' + value);
 		});
 	});
 };

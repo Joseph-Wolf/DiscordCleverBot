@@ -42,7 +42,7 @@ describe('Currency', function(){
 						return done();
 					}
 					return done('Returned successful despite not having enough funds');
-				}, {text: message, db: db, user: user})
+				}, {text: message, db: db, user: user});
 			});
 			it('should return a reply', function(done){
 				let userId = getRandomString();
@@ -59,10 +59,11 @@ describe('Currency', function(){
 						if(err){
 							return done(err);
 						}
-						db.findOne({_id: doc._id}, function(err, doc){
+						db.find({_id: doc._id}).limit(1).exec(function(err, docs){
 							if(err){
 								return done(err);
 							}
+							let doc = docs[0];
 							assert.equal(expectedBallance, doc.money);
 							return done();
 						});
