@@ -24,10 +24,10 @@ module.exports = class discord{
 					let additionalParams = self.registeredMessages[index].additionalParams;
 					if(expression.test(content)){
 						additionalParams.text = content;
-						let user = message.mentions.users.filter(obj => !obj.bot).first();
-						if(user){
-							additionalParams.user = {discordId: user.id, name: user.toString()};
-						}
+						additionalParams.users = [];
+						message.mentions.users.filter(obj => !obj.bot).every(function(user){
+							return additionalParams.users.push({discordId: user.id, name: user.toString()})
+						});
 						additionalParams.isAdmin = message.member.hasPermission('ADMINISTRATOR');
 						return callback(null, function(err, reply){
 							if(err){

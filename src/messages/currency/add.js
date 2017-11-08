@@ -9,11 +9,11 @@ module.exports = function(err, callback, params){
 	if(!params.isAdmin){
 		return callback('You must be an administrator to use this command');
 	}
-	if(params.user === null || params.user === undefined){
+	if(params.users === null || params.users === undefined){
 		return callback('Please mention a user');
 	}
 	let text = params.text;
-	let user = params.user;
+	let users = params.users;
 	let db = params.db;
 	let currencyName = params.currencyName;
 
@@ -22,16 +22,32 @@ module.exports = function(err, callback, params){
 	if(!isPositiveInteger(amount)){
 		return callback('Invalid amount passed.');
 	}
-	//Get the user from the DB
-	db.find({discordId: user.discordId}, function(err, docs){
-		if(err || docs === null || docs === undefined || docs.length === 0){ //If user was not found insert it
-			return db.insert({discordId: user.discordId, name: user.name, money: amount}, function(err, doc){
+
+	db.find({ discordId: { $in: users.map(x => x.discordId) }}, function(err, docs){
+		if(err){
+			return callback('I encountered an error adding currency to users');
+		}
+
+		//Check for missing documents
+		let missingUsers = [];
+		if(docs === null || docs === undefined || docs.length === 0){ //Add all documents as missing
+			missingUsers = users
+		} else if(docs.length !== users.length) { //Add only missing documents
+			let foundIds = docs.map(x => x.discordId);
+			missingUsers = users.filter(x => foundIds.indexOf(x.discordId) === -1);
+		}
+		if (missingUsers.length > 0) { //If any documents are missing then add them
+			let missingDocs = missingUsers.map(function(user){return {discordId: user.discordId, name: user.name, money: 0}});
+			db.insert(missingDocs, function(err, doc){
 				if(err){
 					return callback('I encountered an error adding currency to users');
 				}
-				return callback(null, 'I added ' + amount + ' ' + currencyName + ' to ' + doc.name);
 			});
+			//Append the missing docs so they will be updated
+			//These will be missing the document ids but should contain the discordId
+			docs = docs.concat(missingDocs);
 		}
+
 		//Add the money to the retrieved user
 		return db.update({ $or: docs}, {$inc: {money: amount}}, { upsert: true, multi: true, returnUpdatedDocs: true }, function(err, count, docs){
 			if(err){

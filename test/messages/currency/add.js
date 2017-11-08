@@ -50,7 +50,7 @@ describe('Currency', function(){
 						assert.equal(expectedBallance, doc.money);
 						return done();
 					});
-				}, {text: message, db: db, user: user, isAdmin: true});
+				}, {text: message, db: db, users: [user], isAdmin: true});
 			});
 			it('should add money to existing user', function(done){
 				let userId = getRandomString();
@@ -75,7 +75,7 @@ describe('Currency', function(){
 							assert.equal(expectedBallance, doc.money);
 							return done();
 						});
-					}, {text: message, db: db, user: user, isAdmin: true});
+					}, {text: message, db: db, users: [user], isAdmin: true});
 				});
 			});
 		});
