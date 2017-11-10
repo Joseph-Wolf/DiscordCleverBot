@@ -11,7 +11,7 @@ const currencyAdd = require('../messages/currency/add.js');
 const currencySubtract = require('../messages/currency/subtract.js');
 const currencyBallance = require('../messages/currency/ballance.js');
 const CurrencyNameSettingKey = 'CurrencyName';
-const CurrencyNameDefaultValue = 'onions';
+const CurrencyNameDefaultValue = 'Crystal';
 
 module.exports = function registerMessages(db, discord, cleverbot){
 	discord.clearMessages();
@@ -23,7 +23,7 @@ module.exports = function registerMessages(db, discord, cleverbot){
 	discord.registerMessage(/currency.+?name/i, currencySetName, {db: db, key: CurrencyNameSettingKey, registerMessagesCallback: function(){
 		registerMessages(db, discord, cleverbot);
 	}});
-	db.get({key: CurrencyNameSettingKey}, function(err, doc){
+	db.find({key: CurrencyNameSettingKey}).limit(1).exec(function(err, doc){
 		if(err || doc === null || doc === undefined || doc.value === null || doc.value === undefined){
 			doc = {value: CurrencyNameDefaultValue};
 		}

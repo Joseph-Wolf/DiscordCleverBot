@@ -31,6 +31,36 @@ describe('Currency', function(){
 					return done('Did not reuturn error.');
 				});
 			});
+			it('should return error message for null text', function(done){
+				return currencySubtractMessage(null, function(err, reply){
+					if(err){
+						return currencySubtractMessage(null, function(err, reply){
+							if(err){
+								return done();
+							}
+							return done('Did not reuturn error.');
+						}, {text: 'hello', users: [], isAdmin: true});
+					}
+					return done('Did not reuturn error.');
+				}, {text: 'hello', users: null, isAdmin: true});
+			});
+			it('should return error message for non admins', function(done){
+				let startingBallance = 66;
+				let amountToTake = 55;
+				let users = [{discordId: getRandomString(), name: getRandomString(), money: startingBallance, expectedBallance: startingBallance - amountToTake}];
+				let message = 'Please take ' + amountToTake;
+				return db.insert(users, function(err, docs){
+					if(err){
+						return done(err);
+					}
+					return currencySubtractMessage(null, function(err){
+						if(err){
+							return done();
+						}
+						return done('Did not reuturn error.');
+					}, {text: message, db: db, users: users, isAdmin: false});
+				});
+			});
 			it('should throw error for insufficient funds', function(done){
 				let startingBallance = 54;
 				let amountToTake = 55;

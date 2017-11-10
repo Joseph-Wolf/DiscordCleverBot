@@ -31,6 +31,32 @@ describe('Currency', function(){
 					return done('Did not reuturn error.');
 				});
 			});
+			it('should return error when no users are mentioned', function(done){
+				return currencyAddMessage(null, function(err, reply){
+					if(err){
+						return currencyAddMessage(null, function(err, reply){
+							if(err){
+								return done();
+							}
+							return done('Did not reuturn error.');
+						}, {text: 'hello', users: [], isAdmin: true});
+					}
+					return done('Did not reuturn error.');
+				}, {text: 'hello', users: null, isAdmin: true});
+			});
+			it('should return error for non admin', function(done){
+				let user = {discordId: getRandomString(), name: getRandomString(), money: 0};
+				let startingBallance = user.money;
+				let amountToAdd = 22;
+				let expectedBallance = startingBallance + amountToAdd;
+				let message = 'Please give ' + amountToAdd + ' to ' + user.name;
+				return currencyAddMessage(null, function(err){
+					if(err){
+						return done();
+					}
+					return done('Did not reuturn error.');
+				}, {text: message, db: db, users: [user], isAdmin: false});
+			});
 			it('should return a reply', function(done){
 				let user = {discordId: getRandomString(), name: getRandomString(), money: 0};
 				let startingBallance = user.money;

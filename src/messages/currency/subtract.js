@@ -9,7 +9,7 @@ module.exports = function(err, callback, params){
 	if(!params.isAdmin){
 		return callback('You must be an administrator to use this command');
 	}
-	if(params.users === null || params.users === undefined){
+	if(params.users === null || params.users === undefined || params.users.length === 0){
 		return callback('Please mention a user');
 	}
 	let text = params.text;
@@ -51,6 +51,9 @@ module.exports = function(err, callback, params){
 		return db.update({ $or: docs }, {$inc: {money: -amount}}, { multi: true, returnUpdatedDocs: true }, function(err, count, docs){
 			if(err || docs === null || docs === undefined || docs.length === 0){
 				return callback('I encountered an error taking money to user');
+			}
+			if(docs === null || docs === undefined  || docs.length === 0){
+				return callback('I did not find any users with those names');
 			}
 			docs = docs.sort(function(a, b){return a.name < b.name ? -1 : a.name > b.name ? 1 : 0;});
 			let reply = 'I took ' + amount + ' ' + currencyName + 's from ';

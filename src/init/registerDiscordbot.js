@@ -4,7 +4,6 @@ const prompt = require('prompt');
 const registerWelcomeUsers = require('./registerWelcomeUsers.js');
 const registerMessages = require('./registerMessages.js');
 const registerBotIsPlaying = require('./registerBotIsPlaying.js');
-const Setting = require('../db/class/setting.js');
 
 function authenticateDiscordWithKey(key, discord, callback){
 	discord.authenticate(key, function(err, accepted){
@@ -24,24 +23,23 @@ function authenticateDiscordWithKey(key, discord, callback){
 		return callback(null, accepted);
 	});
 }
-module.exports = function (settingsDb, discord, cleverbot, usersDb, config){
-	settingsDb.get({key: discord.DBKey}, function(err, doc){
-		if(err || doc === null) {
-			doc = new Setting({key: discord.DBKey, value: null});
+module.exports = function (db, discord, cleverbot){
+	return db.find({key: discord.DBKey}).limit(1).exec(function(err, docs){
+		if(err || docs === null || docs.length === 0) {
+			docs = [{key: discord.DBKey, value: null}];
 		}
-		return authenticateDiscordWithKey(doc.value, discord, function(err, key){
+		return authenticateDiscordWithKey(docs[0].value, discord, function(err, key){
 			if(err){
 				console.error('rejected Discord key');
 				return;
 			}
-			doc.value = key;
-			settingsDb.set(doc, function(err){
+			db.update({key: discord.DBKey}, {$set:{value: key}}, {milti: false, upsert: true}, function(err){
 				if(err){
 					console.error(err);
 					return;
 				}
-				registerMessages(settingsDb, discord, cleverbot, usersDb);
-				registerWelcomeUsers(settingsDb, discord);
+				registerMessages(db, discord, cleverbot);
+				registerWelcomeUsers(db, discord);
 				return;
 			});
 		});

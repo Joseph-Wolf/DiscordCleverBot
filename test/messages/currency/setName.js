@@ -47,6 +47,17 @@ describe('Currency', function(){
 				return done('Should require the text');
 			});
 		});
+		it('should fail for non admins', function(done){
+			let expected = 'crystal';
+			let message = 'set currency name to ' + expected + 's';
+			let query = {key: getRandomString()};
+			setName(null, function(err, reply){
+				if(err){
+					return done();
+				}
+				return done('Should have returned an error');
+			}, {text: message, db: db, key: query.key, isAdmin: false});
+		});
 		it('should ignore empty text', function(done){
 			let message = '        ';
 			let key = getRandomString();

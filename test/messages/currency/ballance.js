@@ -36,10 +36,20 @@ describe('Currency', function(){
 				let message = 'Please check the ballance';
 				return currencyBallanceMessage(null, function(err){
 					if(err){
-						return done();
+						return currencyBallanceMessage(null, function(err){
+							if(err){
+								return currencyBallanceMessage(null, function(err){
+									if(err){
+										return done();
+									}
+									return done('Returned ballance of non existant user');
+								}, {text: message, db: db, users: users});
+							}
+							return done('Returned ballance of non existant user');
+						}, {text: message, db: db, users: []});
 					}
 					return done('Returned ballance of non existant user');
-				}, {text: message, db: db, users: users});
+				}, {text: message, db: db, users: null});
 			});
 			it('should return a ballance from the database', function(done){
 				let user = {discordId: getRandomString(), name: getRandomString(), money: 55};

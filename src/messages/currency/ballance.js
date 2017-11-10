@@ -4,7 +4,7 @@ module.exports = function(err, callback, params){
 	if(err || params === null || params === undefined || params.text === null || params.text === undefined || params.db === null || params.db === undefined){
 		return callback('Error checking ballance');
 	}
-	if(params.users === null || params.users === undefined){
+	if(params.users === null || params.users === undefined || params.users.length === 0){
 		return callback('Please mention a user to check the ballance of');
 	}
 	let text = params.text;
@@ -18,6 +18,9 @@ module.exports = function(err, callback, params){
 	return db.find({ discordId: { $in: users.map(x => x.discordId) }}, function(err, docs){
 		if(err || docs === null || docs === undefined || docs.length === 0){
 			return callback('I encountered an error checking users ballance');
+		}
+		if(docs === null || docs === undefined  || docs.length === 0){
+			return callback('I did not find any users with those names');
 		}
 		//Sort by user name
 		docs = docs.sort(function(a, b){return a.name < b.name ? -1 : a.name > b.name ? 1 : 0;});

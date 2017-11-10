@@ -2,8 +2,8 @@
 
 const WelcomeUsersSettingKey = 'WelcomeUsers';
 
-module.exports = function (settingsDb, discord){
-	settingsDb.get({key: WelcomeUsersSettingKey}, function(err, doc){
+module.exports = function (db, discord){
+	db.find({key: WelcomeUsersSettingKey}).limit(1).exec(function(err, doc){
 		if(err){
 			return;
 		}
