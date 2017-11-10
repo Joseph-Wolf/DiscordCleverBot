@@ -28,6 +28,9 @@ module.exports = function (db, discord, cleverbot){
 		if(err || docs === null || docs.length === 0) {
 			docs = [{key: discord.DBKey, value: null}];
 		}
+		if(process !== null && process !== undefined && process.env !== null && process.env !== undefined && process.env[discord.DBKey] !== null && process.env[discord.DBKey] !== undefined){
+			docs[0].value = process.env[discord.DBKey];
+		}
 		return authenticateDiscordWithKey(docs[0].value, discord, function(err, key){
 			if(err){
 				console.error('rejected Discord key');
