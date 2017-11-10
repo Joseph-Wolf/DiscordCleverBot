@@ -9,11 +9,11 @@ module.exports = function(err, callback, params){
 	if(!params.isAdmin){
 		return callback('You must be an administrator to use this command');
 	}
-	if(params.user === null || params.user === undefined){
+	if(params.users === null || params.users === undefined){
 		return callback('Please mention a user');
 	}
 	let text = params.text;
-	let user = params.user;
+	let users = params.users;
 	let db = params.db;
 	let currencyName = params.currencyName;
 
@@ -24,25 +24,37 @@ module.exports = function(err, callback, params){
 	}
 
 	//Get the users from the DB
-	db.find({discordId: user.discordId}, function(err, docs){ //TODO: iterate for many users and concatenate the reply
+	return db.find({ discordId: { $in: users.map(x => x.discordId) }}, function(err, docs){
 		if(err || docs === null || docs === undefined || docs.length === 0){
 			return callback('I encountered an error taking money from user');
 		}
-		//Subtract the money to the retrieved user
-		let index = 0;
-		for(index = 0; index < docs.length; index++){
+		//Make sure all users were found
+		if(docs.length !== users.length){
+			let foundIds = docs.map(x => x.discordId);
+			let missingUsers = users.filter(x => foundIds.indexOf(x.discordId) === -1);
+			let errorMessage = 'The following users have insufficient funds:';
+			for(let index = 0; index < missingUsers.length; index++){
+				errorMessage = errorMessage + index > 0 ? ', ':' ' + missingUsers[index].name;
+			}
+			return callback(errorMessage);
+		}
+
+		//Make sure all users have enough
+		for(let index = 0; index < docs.length; index++){
 			let user = docs[index];
 			if(user.money < amount){
 				return callback(user.name + ' has Insufficient funds');
 			}
 		}
-		db.update({ $or: docs }, {$inc: {money: -amount}}, { multi: true, returnUpdatedDocs: true }, function(err, count, docs){
+
+		//Subtract the money to the retrieved user
+		return db.update({ $or: docs }, {$inc: {money: -amount}}, { multi: true, returnUpdatedDocs: true }, function(err, count, docs){
 			if(err || docs === null || docs === undefined || docs.length === 0){
 				return callback('I encountered an error taking money to user');
 			}
+			docs = docs.sort(function(a, b){return a.name < b.name ? -1 : a.name > b.name ? 1 : 0;});
 			let reply = 'I took ' + amount + ' ' + currencyName + 's from ';
-			let index = 0;
-			for(index = 0; index < docs.length; index++){
+			for(let index = 0; index < docs.length; index++){
 				let user = docs[index];
 				reply = reply + (index > 0 ? ', ' : '') + user.name;
 			}

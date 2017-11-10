@@ -4,29 +4,28 @@ module.exports = function(err, callback, params){
 	if(err || params === null || params === undefined || params.text === null || params.text === undefined || params.db === null || params.db === undefined){
 		return callback('Error checking ballance');
 	}
-	if(params.user === null || params.user === undefined){
+	if(params.users === null || params.users === undefined){
 		return callback('Please mention a user to check the ballance of');
 	}
 	let text = params.text;
 	let db = params.db;
-	let user = params.user;
+	let users = params.users;
 	let currencyName = params.currencyName;
 
 	let amount = parseInt(text.match(/[\d]+/));
 
 	//Get the user from the DB
-	db.find({discordId: user.discordId}, function(err, docs){
+	return db.find({ discordId: { $in: users.map(x => x.discordId) }}, function(err, docs){
 		if(err || docs === null || docs === undefined || docs.length === 0){
 			return callback('I encountered an error checking users ballance');
 		}
+		//Sort by user name
+		docs = docs.sort(function(a, b){return a.name < b.name ? -1 : a.name > b.name ? 1 : 0;});
 		let reply = '';
-		let index = 0;
-		for(index = 0; index < docs.length; index++){
-			let user = docs[index];
+		for(let index = 0; index < docs.length; index++){
+			reply = reply + index > 0 ? '\n':'' + docs[index].name + ' has a ballance of ' + docs[index].money;
 			if(currencyName) {
-				reply = reply + user.name + ' has ' + user.money + ' ' + currencyName + 's';
-			} else {
-				reply = reply + user.name + ' has a ballance of ' + user.money;
+				reply = reply  + ' ' + currencyName + 's';
 			}
 		}
 		return callback(null, reply);

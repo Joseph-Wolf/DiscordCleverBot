@@ -23,7 +23,7 @@ module.exports = function(err, callback, params){
 		return callback('Invalid amount passed.');
 	}
 
-	db.find({ discordId: { $in: users.map(x => x.discordId) }}, function(err, docs){
+	return db.find({ discordId: { $in: users.map(x => x.discordId) }}, function(err, docs){
 		if(err){
 			return callback('I encountered an error adding currency to users');
 		}
@@ -53,6 +53,7 @@ module.exports = function(err, callback, params){
 			if(err){
 				return callback('I encountered an error adding currency to users');
 			}
+			docs = docs.sort(function(a, b){return a.name < b.name ? -1 : a.name > b.name ? 1 : 0;});
 			let reply = 'I added ' + amount + ' ' + currencyName + ' to ';
 			let index = 0;
 			for(index = 0; index < docs.length; index++){
