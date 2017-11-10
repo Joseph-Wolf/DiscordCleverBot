@@ -4,6 +4,38 @@ const assert = require('assert');
 const discordbot = require('../src/discordbot.js');
 const getRandomString = require('../src/util/getRandomString.js');
 
+function MockCollection(initarray){
+	let self = this;
+	self.testArray = initarray ? initarray : [];
+	self.filter = function(callback){
+		self.testArray = self.testArray.filter(callback);
+		return self;
+	};
+	self.first = function(){return self.testArray[0]};
+	self.array = function(){return self.testArray};
+	self.members =  self.testArray;
+	self.every = function(callback){return self.testArray.every(callback);};
+	self.map = function(callback){return self.testArray.map(callback)};
+	return self;
+}
+
+function MockMessage(content, author){
+	let self = this;
+	self.cleanContent = content ? content : '';
+	self.author = author ? author : {id: getRandomString()};
+	self.isMentioned = function(){return true;}
+	self.mentions = {
+		users: new MockCollection(),
+		roles: new MockCollection()
+	};
+	self.member = {
+		hasPermission: function(){
+			return true;
+		}
+	}
+	return self;
+}
+
 describe('discordbot', function(){
 	let bot;
 	beforeEach(function(){
@@ -18,34 +50,9 @@ describe('discordbot', function(){
 		});
 	});
 	describe('registerMessage', function(){
-		let mockMessage;
 		beforeEach(function(){
-			let testAuthor = {id: getRandomString()};
 			let testUser = {id: getRandomString(), bot: true};
-
 			bot.client.user = testUser;
-			mockMessage = {
-				cleanContent: 'hello world',
-				author: testAuthor,
-				isMentioned: function(){return true;},
-				mentions: {
-					users: {
-						arrayOfUsers: [{id:getRandomString()}, testUser, testAuthor],
-						filter: function(callback){
-							this.arrayOfUsers = this.arrayOfUsers.filter(callback);
-							return this;
-						},
-						first: function(){return this.arrayOfUsers[0]},
-						array: function(){return this.arrayOfUsers},
-						every: function(callback){return this.arrayOfUsers.every(callback);}
-					}
-				},
-				member: {
-					hasPermission: function(){
-						return true;
-					}
-				}
-			};
 		});
 		it('should add messages', function(){
 			let initialLength = bot.registeredMessages.length;
@@ -65,39 +72,45 @@ describe('discordbot', function(){
 				done('called second matching message');
 			});
 			//Emit the message
-			bot.client.emit('message', mockMessage);
+			bot.client.emit('message', new MockMessage('hello world'));
 		});
 		it('should pass an err, callback, and params', function(done){
 			let expectedText = 'hello world';
 			bot.registerMessage(/hello/, function(err, callback, params){
+				if(err){
+					return done(err);
+				}
 				assert.equal(expectedText, params.text);
 				assert.ok(callback);
 				assert.equal(typeof callback, 'function');
 				return done();
 			});
 			//Emit the message
-			bot.client.emit('message', mockMessage);
+			bot.client.emit('message', new MockMessage(expectedText));
 		});
 		it('should pass users single users as array', function(done){
 			let expectedText = 'hello world';
-			let testMessage = mockMessage;
+			let testMessage = new MockMessage('hello world');
 			let testID = getRandomString();
 			let testName = getRandomString();
 			let testUser = {id:testID, toString: function(){return testName;}};
 			let expectedUser = {discordId: testID, name: testName};
-			testMessage.mentions.users.arrayOfUsers = [testUser];
+			testMessage.mentions.users.testArray = [testUser];
 			bot.registerMessage(/hello/, function(err, callback, params){
+				if(err){
+					return done(err);
+				}
 				assert.ok(params.users);
 				assert.ok(typeof params.users, 'array');
 				assert.deepEqual(params.users[0], expectedUser);
 				return done();
 			});
 			//Emit the message
-			bot.client.emit('message', mockMessage);
+			bot.client.emit('message', testMessage);
 		});
 		it('should pass users multiple users as array', function(done){
 			let expectedText = 'hello world';
-			let testMessage = mockMessage;
+			let testMessage = new MockMessage(expectedText);
 			let numberOfUsers = 5;
 			let expectedUsers = [];
 			let testUsers = [];
@@ -107,8 +120,11 @@ describe('discordbot', function(){
 				testUsers.push({id:testID, toString: function(){return testName;}});
 				expectedUsers.push({discordId: testID, name: testName});
 			}
-			testMessage.mentions.users.arrayOfUsers = testUsers;
+			testMessage.mentions.users.testArray = testUsers;
 			bot.registerMessage(/hello/, function(err, callback, params){
+				if(err){
+					return done(err);
+				}
 				assert.ok(params.users);
 				assert.ok(typeof params.users, 'array');
 				assert.equal(params.users.length, numberOfUsers);
@@ -116,11 +132,42 @@ describe('discordbot', function(){
 				return done();
 			});
 			//Emit the message
-			bot.client.emit('message', mockMessage);
+			bot.client.emit('message', testMessage);
 		});
-		it('should remove the bot from the array', function(done){
+		it('should resolve roles to users', function(done){
 			let expectedText = 'hello world';
-			let testMessage = mockMessage;
+			let testMessage = new MockMessage(expectedText);
+			let numberOfUsers = 5;
+			let usersInRole1 = [];
+			let usersInRole2 = [];
+			let expectedUsers = [];
+			for(let index = 0; index < numberOfUsers; index++){
+				let id1 = getRandomString();
+				let id2 = getRandomString();
+				let name1 = getRandomString();
+				let name2 = getRandomString();
+				usersInRole1.push({id:id1, toString: function(){return name1;}});
+				expectedUsers.push({discordId:id1, name: name1});
+				usersInRole1.push({id:id2, toString: function(){return name2;}});
+				expectedUsers.push({discordId:id2, name: name2});
+			}
+			testMessage.mentions.roles.testArray = new MockCollection([new MockCollection(usersInRole1), new MockCollection(usersInRole2)]);
+			bot.registerMessage(/hello/, function(err, callback, params){
+				if(err){
+					return done(err);
+				}
+				assert.ok(params.users);
+				assert.ok(typeof params.users, 'array');
+				assert.equal(params.users.length, numberOfUsers * 2);
+				assert.deepEqual(params.users, expectedUsers);
+				return done();
+			});
+			//Emit the message
+			bot.client.emit('message', testMessage);
+		});
+		it('should remove the bot from the users array', function(done){
+			let expectedText = 'hello world';
+			let testMessage = new MockMessage(expectedText);
 			let numberOfUsers = 5;
 			let testAuthor = {id: getRandomString(), toString: function(){return getRandomString()}};
 			let testBot = {id: getRandomString(), toString: function(){return getRandomString()}};
@@ -134,8 +181,11 @@ describe('discordbot', function(){
 			}
 			//Push bot onto list
 			testUsers.push(bot.client.user);
-			testMessage.mentions.users.arrayOfUsers = testUsers;
+			testMessage.mentions.users.testArray = testUsers;
 			bot.registerMessage(/hello/, function(err, callback, params){
+				if(err){
+					return done(err);
+				}
 				assert.ok(params.users);
 				assert.ok(typeof params.users, 'array');
 				assert.equal(params.users.length, numberOfUsers);
@@ -143,7 +193,7 @@ describe('discordbot', function(){
 				return done();
 			});
 			//Emit the message
-			bot.client.emit('message', mockMessage);
+			bot.client.emit('message', testMessage);
 		});
 	});
 	describe('welcomeUsers', function(){
@@ -158,7 +208,7 @@ describe('discordbot', function(){
 			let secondaryLength = bot.getEventCount();
 			assert.equal(initialLength + 1, secondaryLength);
 		});
-		it('should not register the welcome message if false', function(){
+		it('should not register the welcome messagef if false', function(){
 			let initialLength = bot.getEventCount();
 			bot.welcomeUsers(false);
 			let secondaryLength = bot.getEventCount();
