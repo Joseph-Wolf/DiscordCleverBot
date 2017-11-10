@@ -26,6 +26,7 @@
     "sinon": "^3.3.0"
   },
   "scripts": {
-    "test": "mocha --recursive"
+    "test": "mocha --recursive",
+    "start": "index.js"
   }
 }
