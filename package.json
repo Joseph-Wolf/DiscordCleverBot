@@ -11,10 +11,8 @@
     "discord.js": "^11.2.1",
     "dog-facts": "^1.0.3",
     "dotenv": "^4.0.0",
-    "is-invalid-path": "^0.1.0",
     "is-positive-integer": "^1.1.1",
     "mongodb": "^2.2.33",
-    "path": "^0.12.7",
     "prompt": "^1.0.0",
     "random-int": "^1.0.0",
     "random-item": "^1.0.0",
@@ -25,9 +23,7 @@
     "node": "6.9.5"
   },
   "devDependencies": {
-    "fs": "0.0.1-security",
     "mocha": "^3.5.0",
-    "rimraf": "^2.6.1",
     "sinon": "^3.3.0"
   },
   "scripts": {
