@@ -1,10 +1,19 @@
 "use strict";
 
-const isPositiveInteger = require('../../util/isPositiveInteger.js');
+const isPositiveInteger = require('is-positive-integer');
 
-module.exports = function(err, callback, params){
-	if(err || params === null || params === undefined || params.text === null || params.text === undefined || params.db === null || params.db === undefined){
-		return callback('Error Subtracting currency');
+function validate(params, callback){
+	if(params === null || params === undefined){
+		console.error('null or undefined params.');
+		return callback('Invalid parameters passed to subtract function.');
+	}
+	if(params.text === null || params.text === undefined){
+		console.error('null or undefined text.');
+		return callback('Invalid parameters passed to subtract function.');
+	}
+	if(params.db === null || params.db === undefined){
+		console.error('null or undefined db.');
+		return callback('Invalid parameters passed to subtract function.');
 	}
 	if(!params.isAdmin){
 		return callback('You must be an administrator to use this command');
@@ -12,56 +21,68 @@ module.exports = function(err, callback, params){
 	if(params.users === null || params.users === undefined || params.users.length === 0){
 		return callback('Please mention a user');
 	}
-	let text = params.text;
-	let users = params.users;
-	let db = params.db;
-	let currencyName = params.currencyName;
-
-	let amount = parseInt(text.match(/[\d]+/));
-
-	if(!isPositiveInteger(amount)){
-		return callback('Invalid amount passed.');
+	return callback(null);
+}
+function findUsersWithSufficientFunds(db, userIds, amount, callback){
+	return db.find({$and: [{$or: userIds}, {money: {$gte: amount}}]}).toArray(callback);
+}
+function takeCurrencyFromUsers(db, userIds, amount, callback){
+	return db.update({$or: userIds}, {$inc: {money: -amount}}, {multi: true}, callback);
+}
+function constructSuccessfulReply(userNames, amount, currencyName, callback){
+	let reply = 'I took ' + amount + ' ' + currencyName + 's from ';
+	for(let index = 0; index < userNames.length; index++){
+		reply = reply + (index > 0 ? ', ' : '') + userNames[index];
 	}
+	return callback(null, reply);
+}
+function constructInvalidAmountReply(users, foundUsers, callback){
+	let foundUserIds = foundUsers.map(x => x.discordId);
+	let missingUserNames = users.filter(function(user){return foundUserIds.indexOf(user.discordId) < 0}).map(x => x.name);
+	let reply = 'The following users have insufficient funds: ';
+	for(let index = 0; index < missingUserNames.length; index++){
+		reply = reply + (index > 0 ? ', ' : '') + missingUserNames[index];
+	}
+	return callback(reply);
+}
 
-	//Get the users from the DB
-	return db.find({ discordId: { $in: users.map(x => x.discordId) }}, function(err, docs){
-		if(err || docs === null || docs === undefined || docs.length === 0){
-			return callback('I encountered an error taking money from user');
+module.exports = function(err, callback, params){
+	if(err){
+		console.error(err);
+		return callback('I encountered an error subtracting currency.');
+	}
+	return validate(params, function(err){
+		if(err){
+			return callback(err);
 		}
-		//Make sure all users were found
-		if(docs.length !== users.length){
-			let foundIds = docs.map(x => x.discordId);
-			let missingUsers = users.filter(x => foundIds.indexOf(x.discordId) === -1);
-			let errorMessage = 'The following users have insufficient funds:';
-			for(let index = 0; index < missingUsers.length; index++){
-				errorMessage = errorMessage + index > 0 ? ', ':' ' + missingUsers[index].name;
-			}
-			return callback(errorMessage);
+		let text = params.text;
+		let users = params.users;
+		let db = params.db;
+		let currencyName = params.currencyName;
+		let userIds = users.map(function(user){return {discordId: user.discordId}});
+
+		let amount = parseInt(text.match(/[\d]+/));
+
+		if(!isPositiveInteger(amount)){
+			return callback('Invalid amount passed.');
 		}
 
-		//Make sure all users have enough
-		for(let index = 0; index < docs.length; index++){
-			let user = docs[index];
-			if(user.money < amount){
-				return callback(user.name + ' has Insufficient funds');
+		return findUsersWithSufficientFunds(db, userIds, amount, function(err, foundUsers){
+			if(err){
+				console.err(err);
+				return callback('I encountered an error finding users.');
 			}
-		}
-
-		//Subtract the money to the retrieved user
-		return db.update({ $or: docs }, {$inc: {money: -amount}}, { multi: true, returnUpdatedDocs: true }, function(err, count, docs){
-			if(err || docs === null || docs === undefined || docs.length === 0){
-				return callback('I encountered an error taking money to user');
+			if(users.length === foundUsers.length){ //take money from users
+				return takeCurrencyFromUsers(db, userIds, amount, function(err){
+					if(err){
+						console.error(err);
+						return callback('I encountered an error taking currency from users.')
+					}
+					let sortedUserNames = users.sort(function(a, b){return a.name < b.name ? -1 : a.name > b.name ? 1 : 0;});
+					return constructSuccessfulReply(sortedUserNames, amount, currencyName, callback);
+				});
 			}
-			if(docs === null || docs === undefined  || docs.length === 0){
-				return callback('I did not find any users with those names');
-			}
-			docs = docs.sort(function(a, b){return a.name < b.name ? -1 : a.name > b.name ? 1 : 0;});
-			let reply = 'I took ' + amount + ' ' + currencyName + 's from ';
-			for(let index = 0; index < docs.length; index++){
-				let user = docs[index];
-				reply = reply + (index > 0 ? ', ' : '') + user.name;
-			}
-			return callback(null, reply);
+			return constructInvalidAmountReply(users, foundUsers, callback);
 		});
 	});
 }

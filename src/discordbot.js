@@ -7,7 +7,7 @@ module.exports = class discord{
 		let self = this;
 		self.client = new Discord.Client();
 		self.client.on('ready', () => { //display message to the console when up and running
-			console.log('I am ready!');
+			console.info('I am ready!');
 		});
 		self.registeredMessages = [];
 		self.DBKey = 'DiscordToken';

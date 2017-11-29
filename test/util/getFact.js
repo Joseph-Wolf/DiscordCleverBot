@@ -1,8 +1,8 @@
 "use strict";
 
 const assert = require('assert');
+const randomInt = require('random-int');
 const getFact = require('../../src/util/getFact.js');
-const getRandomInt = require('../../src/util/getRandomInt.js');
 
 describe('getFact', function(){
 	describe('cats', function(){
@@ -20,7 +20,7 @@ describe('getFact', function(){
 			getFact('year', done);
 		});
 		it('should return a specific fact', function(done){
-			let number = getRandomInt(100, 2000);
+			let number = randomInt(100, 2000);
 			getFact('year ' + number, function(err, response){
 				assert.ok(response);
 				assert.ok(response.indexOf(number) !== -1);
@@ -33,18 +33,18 @@ describe('getFact', function(){
 			getFact('date', done);
 		});
 		it('should return a specific fact', function(done){
-			let month = getRandomInt(1, 12);
-			let day = getRandomInt(1, 32);
+			let month = randomInt(1, 12);
+			let day = randomInt(1, 32);
 			getFact('date ' + month + ' ' + day, done);
 		});
 		it('should return an random fact for invalid month', function(done){
-			let month = getRandomInt(-99999, 0);
-			let day = getRandomInt(1, 32);
+			let month = randomInt(-99999, 0);
+			let day = randomInt(1, 32);
 			getFact('date ' + month + ' ' + day, done);
 		});
 		it('should return an random fact for invalid day', function(done){
-			let month = getRandomInt(1, 12);
-			let day = getRandomInt(50, 9999);
+			let month = randomInt(1, 12);
+			let day = randomInt(50, 9999);
 			getFact('date ' + month + ' ' + day, done);
 		});
 	});
@@ -53,7 +53,7 @@ describe('getFact', function(){
 			getFact('number', done);
 		});
 		it('should return a specific fact', function(done){
-			let number = getRandomInt(0, 99999);
+			let number = randomInt(0, 99999);
 			getFact('number ' + number, function(err, response){
 				assert.ok(response);
 				assert.ok(response.indexOf(number) !== -1);
@@ -66,7 +66,7 @@ describe('getFact', function(){
 			getFact('trivia', done);
 		});
 		it('should return a specific fact', function(done){
-			let number = getRandomInt(0, 99999);
+			let number = randomInt(0, 99999);
 			getFact('trivia ' + number, function(err, response){
 				assert.ok(response);
 				assert.ok(response.indexOf(number) !== -1);

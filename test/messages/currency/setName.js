@@ -1,18 +1,12 @@
 "use strict";
 
 const assert = require('assert');
-const data = require('nedb');
+const randomString = require('random-string');
 const testUtils = require('../../testUtils.js');
 const setName = require('../../../src/messages/currency/setName.js');
-const getRandomString = require('../../../src/util/getRandomString.js');
-
-let db = null;
 
 describe('Currency', function(){
-	before(function (done) {
-		let dbFilename = testUtils.generateDataFilePath();
-		db = new data({filename: dbFilename, autoload: true, onload: done});
-	});
+	before(testUtils.dbBefore);
 	describe('setName', function(){
 		it('should return a friendly error if an error is passed to it', function(done){
 			setName(true, function(err){
@@ -23,86 +17,111 @@ describe('Currency', function(){
 			});
 		});
 		it('should require expected parameters', function(done){
-			let expected = getRandomString();
-			let key = getRandomString();
-			setName(null, function(err){
+			let expected = randomString();
+			let key = randomString();
+			return testUtils.dbExecute(function(err, collection){
 				if(err){
-					return setName(null, function(err){
-						if(err){
-							return setName(null, function(err){
-								if(err){
-									return setName(null, function(err){
-										if(err){
-											return setName(null, done, {text: expected, db: db, key: key, isAdmin: true})
-										}
-										return done('Should be an admin');
-									}, {text: expected, db: db, key: key})
-								}
-								return done('Should require currency name key');
-							}, {text: expected, db: db});
-						}
-						return done('Should require the database');
-					}, {text: expected});
+					return done(err);
 				}
-				return done('Should require the text');
+				return setName(null, function(err){
+					if(err){
+						return setName(null, function(err){
+							if(err){
+								return setName(null, function(err){
+									if(err){
+										return setName(null, function(err){
+											if(err){
+												return setName(null, done, {text: expected, db: collection, key: key, isAdmin: true})
+											}
+											return done('Should be an admin');
+										}, {text: expected, db: collection, key: key})
+									}
+									return done('Should require currency name key');
+								}, {text: expected, db: collection});
+							}
+							return done('Should require the database');
+						}, {text: expected});
+					}
+					return done('Should require the text');
+				});
 			});
 		});
 		it('should fail for non admins', function(done){
 			let expected = 'crystal';
 			let message = 'set currency name to ' + expected + 's';
-			let query = {key: getRandomString()};
-			setName(null, function(err, reply){
+			let query = {key: randomString()};
+			return testUtils.dbExecute(function(err, collection){
 				if(err){
-					return done();
+					return done(err);
 				}
-				return done('Should have returned an error');
-			}, {text: message, db: db, key: query.key, isAdmin: false});
+				return setName(null, function(err, reply){
+					if(err){
+						return done();
+					}
+					return done('Should have returned an error');
+				}, {text: message, db: collection, key: query.key, isAdmin: false});
+			});
 		});
 		it('should ignore empty text', function(done){
 			let message = '        ';
-			let key = getRandomString();
-			setName(null, function(err, reply){
+			let key = randomString();
+			return testUtils.dbExecute(function(err, collection){
 				if(err){
-					return done();
+					return done(err);
 				}
-				return done('Should have returned an error if there is no last word.');
-			}, {text: message, db: db, key: key, isAdmin: true});
+				return setName(null, function(err, reply){
+					if(err){
+						return done();
+					}
+					return done('Should have returned an error if there is no last word.');
+				}, {text: message, db: collection, key: key, isAdmin: true});
+			});
 		});
 		it('should trim any trailing s characters', function(done){
 			let expected = 'crystal';
 			let message = 'set currency name to ' + expected + 's';
-			let query = {key: getRandomString()};
-			setName(null, function(err, reply){
+			let query = {key: randomString()};
+			return testUtils.dbExecute(function(err, collection){
 				if(err){
 					return done(err);
 				}
-				db.find(query).limit(1).exec(function(err, doc){
+				return setName(null, function(err, reply){
 					if(err){
 						return done(err);
 					}
-					assert.equal(expected, doc[0].value);
-					return done();
-				});
-			}, {text: message, db: db, key: query.key, isAdmin: true});
+					return collection.find(query).limit(1).toArray(function(err, doc){
+						if(err){
+							return done(err);
+						}
+						assert.equal(expected, doc[0].value);
+						return done();
+					});
+				}, {text: message, db: collection, key: query.key, isAdmin: true});
+			});
 		});
 		it('should set valid name in the database', function(done){
-			let expected = getRandomString();
+			let expected = randomString();
 			let message = 'set currency name to ' + expected;
-			let query = {key: getRandomString()}
-			setName(null, function(err, reply){
+			let query = {key: randomString()};
+			return testUtils.dbExecute(function(err, collection){
 				if(err){
 					return done(err);
 				}
-				db.find(query).limit(1).exec(function(err, doc){
+				return setName(null, function(err, reply){
 					if(err){
 						return done(err);
 					}
-					assert.ok(doc);
-					assert.equal(expected, doc[0].value);
-					return done();
-				});
-			}, {text: message, db: db, key: query.key, isAdmin: true});
+					return collection.find(query).limit(1).toArray(function(err, doc){
+						if(err){
+							return done(err);
+						}
+						assert.ok(doc);
+						assert.equal(expected, doc[0].value);
+						return done();
+					});
+				}, {text: message, db: collection, key: query.key, isAdmin: true});
+			});
 		});
 	});
-	after(testUtils.deleteTempDataPath);
+	after(testUtils.dbAfter);
 });

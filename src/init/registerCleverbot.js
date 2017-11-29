@@ -1,18 +1,20 @@
 "use strict";
 
 module.exports = function (db, cleverbot){
-	db.find({key: cleverbot.DBKey}).limit(1).exec(function(err, doc){
-		if(err || doc === null || doc === undefined || doc.value === null || doc.value === undefined || doc.value.user === null || doc.value.user === undefined) {
-			return;
+	db.find({key: cleverbot.DBKey}).limit(1).toArray(function(err, items){
+		if(err){
+			throw err;
+		}
+		let doc = items[0];
+		if(doc === null || doc === undefined || doc.value === null || doc.value === undefined) {
+			return console.info('No cleverbot credentials are recorded');
 		}
 		return cleverbot.authenticate(doc.value, function(err, accepted){
 			if(err){
-				console.log('rejected cleverbot credentials');
-				console.error(err);
-				return
+				console.error('rejected cleverbot credentials');
+				return console.error(err);
 			}
-			console.log('accepted cleverbot credentials');
-			return
+			return console.info('accepted cleverbot credentials');
 		});
 	});
 }

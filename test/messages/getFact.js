@@ -2,7 +2,6 @@
 
 const assert = require('assert');
 const getFact = require('../../src/util/getFact.js');
-const getRandomInt = require('../../src/util/getRandomInt.js');
 const getFactMessage = require('../../src/messages/getFact.js');
 
 describe('getFact', function(){
