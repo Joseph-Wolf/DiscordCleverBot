@@ -6,8 +6,8 @@ const init = require('./src/init.js');
 
 let DBUrl = 'mongodb://localhost:27017/test';
 
-if(process !== null && process !== undefined && process.env !== null && process.env !== undefined && process.env.MongoURL !== null && process.env.MongoURL !== undefined){
-	DBUrl = process.env.MongoURL;
+if(process !== null && process !== undefined && process.env !== null && process.env !== undefined && process.env.DBUrl !== null && process.env.DBUrl !== undefined){
+	DBUrl = process.env.DBUrl;
 }
 
 MongoClient.connect(DBUrl, function(err, db){
