@@ -3,7 +3,7 @@
 const WelcomeUsersSettingKey = 'WelcomeUsers';
 
 module.exports = function (db, discord){
-	db.find({key: WelcomeUsersSettingKey}).limit(1).exec(function(err, doc){
+	db.find({key: WelcomeUsersSettingKey}).limit(1).toArray(function(err, doc){
 		if(err){
 			return;
 		}

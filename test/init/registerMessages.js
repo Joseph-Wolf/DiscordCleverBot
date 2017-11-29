@@ -14,6 +14,7 @@ describe('registerMessages', function(){
 				let index = 0;
 				for(index = 0; index < expectedMatches.length; index++){
 					assert.ok(expression.test(expectedMatches[index]));
+
 				}
 			});
 		});

@@ -11,9 +11,13 @@
     "discord.js": "^11.2.1",
     "dog-facts": "^1.0.3",
     "is-invalid-path": "^0.1.0",
-    "nedb": "^1.8.0",
+    "is-positive-integer": "^1.1.1",
+    "mongodb": "^2.2.33",
     "path": "^0.12.7",
     "prompt": "^1.0.0",
+    "random-int": "^1.0.0",
+    "random-item": "^1.0.0",
+    "random-string": "^0.2.0",
     "request": "^2.81.0"
   },
   "engines": {

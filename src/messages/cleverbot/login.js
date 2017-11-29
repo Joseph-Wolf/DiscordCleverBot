@@ -20,7 +20,10 @@ module.exports = function(err, callback, params){
 			return callback('Failed to authenticate with provided credentials.\n(auth|login) cleverbot {user}:{token}');
 		}
 		let query = {key: cleverbot.DBKey};
-		return data.find(query).limit(1).exec(function(err, doc){
+		return data.find(query).limit(1).toArray(function(err, doc){
+			if(err){
+				console.error(err);
+			}
 			if(err || doc === null || doc === undefined || doc.length === 0){
 				query.value = accepted;
 				return data.insert(query, function(err, doc){

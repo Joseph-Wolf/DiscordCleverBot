@@ -1,8 +1,8 @@
 "use strict";
 
 const assert = require('assert');
+const randomString = require('random-string');
 const discordbot = require('../src/discordbot.js');
-const getRandomString = require('../src/util/getRandomString.js');
 
 function MockCollection(initarray){
 	let self = this;
@@ -22,7 +22,7 @@ function MockCollection(initarray){
 function MockMessage(content, author){
 	let self = this;
 	self.cleanContent = content ? content : '';
-	self.author = author ? author : {id: getRandomString()};
+	self.author = author ? author : {id: randomString()};
 	self.isMentioned = function(){return true;}
 	self.mentions = {
 		users: new MockCollection(),
@@ -51,7 +51,7 @@ describe('discordbot', function(){
 	});
 	describe('registerMessage', function(){
 		beforeEach(function(){
-			let testUser = {id: getRandomString(), bot: true};
+			let testUser = {id: randomString(), bot: true};
 			bot.client.user = testUser;
 		});
 		it('should add messages', function(){
@@ -91,8 +91,8 @@ describe('discordbot', function(){
 		it('should pass users single users as array', function(done){
 			let expectedText = 'hello world';
 			let testMessage = new MockMessage('hello world');
-			let testID = getRandomString();
-			let testName = getRandomString();
+			let testID = randomString();
+			let testName = randomString();
 			let testUser = {id:testID, toString: function(){return testName;}};
 			let expectedUser = {discordId: testID, name: testName};
 			testMessage.mentions.users.testArray = [testUser];
@@ -115,8 +115,8 @@ describe('discordbot', function(){
 			let expectedUsers = [];
 			let testUsers = [];
 			for(let index = 0; index < numberOfUsers; index++){
-				let testID = getRandomString();
-				let testName = getRandomString();
+				let testID = randomString();
+				let testName = randomString();
 				testUsers.push({id:testID, toString: function(){return testName;}});
 				expectedUsers.push({discordId: testID, name: testName});
 			}
@@ -142,10 +142,10 @@ describe('discordbot', function(){
 			let usersInRole2 = [];
 			let expectedUsers = [];
 			for(let index = 0; index < numberOfUsers; index++){
-				let id1 = getRandomString();
-				let id2 = getRandomString();
-				let name1 = getRandomString();
-				let name2 = getRandomString();
+				let id1 = randomString();
+				let id2 = randomString();
+				let name1 = randomString();
+				let name2 = randomString();
 				usersInRole1.push({id:id1, toString: function(){return name1;}});
 				expectedUsers.push({discordId:id1, name: name1});
 				usersInRole1.push({id:id2, toString: function(){return name2;}});
@@ -169,13 +169,13 @@ describe('discordbot', function(){
 			let expectedText = 'hello world';
 			let testMessage = new MockMessage(expectedText);
 			let numberOfUsers = 5;
-			let testAuthor = {id: getRandomString(), toString: function(){return getRandomString()}};
-			let testBot = {id: getRandomString(), toString: function(){return getRandomString()}};
+			let testAuthor = {id: randomString(), toString: function(){return randomString()}};
+			let testBot = {id: randomString(), toString: function(){return randomString()}};
 			let expectedUsers = [];
 			let testUsers = [];
 			for(let index = 0; index < numberOfUsers; index++){
-				let testID = getRandomString();
-				let testName = getRandomString();
+				let testID = randomString();
+				let testName = randomString();
 				testUsers.push({id:testID, toString: function(){return testName;}});
 				expectedUsers.push({discordId: testID, name: testName});
 			}

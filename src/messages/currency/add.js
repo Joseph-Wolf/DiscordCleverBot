@@ -1,10 +1,19 @@
 "use strict";
 
-const isPositiveInteger = require('../../util/isPositiveInteger.js');
+const isPositiveInteger = require('is-positive-integer');
 
-module.exports = function(err, callback, params){
-	if(err || params === null || params === undefined || params.text === null || params.text === undefined || params.db === null || params.db === undefined){
-		return callback('Error Adding currency');
+function validation(params, callback){
+	if(params === null || params === undefined){
+		console.error('null or undefined params');
+		return callback('Invalid parameters passed to add function.');
+	}
+	if(params.text === null || params.text === undefined){
+		console.error('null or undefined text')
+		return callback('Invalid parameters passed to add function.');
+	}
+	if(params.db === null || params.db === undefined){
+		console.error('null or undefined db.')
+		return callback('Invalid parameters passed to add function.');
 	}
 	if(!params.isAdmin){
 		return callback('You must be an administrator to use this command');
@@ -12,58 +21,50 @@ module.exports = function(err, callback, params){
 	if(params.users === null || params.users === undefined || params.users.length === 0){
 		return callback('Please mention a user');
 	}
-	let text = params.text;
-	let users = params.users;
-	let db = params.db;
-	let currencyName = params.currencyName;
-
-	let amount = parseInt(text.match(/[\d]+/));
-
-	if(!isPositiveInteger(amount)){
-		return callback('Invalid amount passed.');
+	return callback(null);
+}
+function upsertUsers(db, users, amount, callback){
+	let userIds = users.map(function(user){return {discordId: user.discordId}});
+	return db.update({$or: userIds}, {$inc: {money: amount}}, {multi: true, upsert: true}, callback);
+}
+function getSuccessfulReply(users, amount, currencyName, callback){
+	let reply = 'I added ' + amount;
+	if(currencyName !== null && currencyName !== undefined){
+		reply = reply + ' ' + currencyName;
 	}
+	reply = reply + ' to ';
+	let userNames = users.map(user => user.name);
+	for(let index = 0; index < userNames.length; index++){
+		reply = reply + (index > 0 ? ', ' : '') + userNames[index];
+	}
+	return callback(null, reply);
+}
 
-	return db.find({ discordId: { $in: users.map(x => x.discordId) }}, function(err, docs){
+module.exports = function(err, callback, params){
+	if(err){
+		console.error(err);
+		return callback('I encountered an error adding currency!');
+	}
+	return validation(params, function(err){
 		if(err){
-			return callback('I encountered an error adding currency to users');
+			return callback(err);
 		}
+		let text = params.text;
+		let users = params.users;
+		let db = params.db;
+		let currencyName = params.currencyName;
 
-		//Check for missing documents
-		let missingUsers = [];
-		if(docs === null || docs === undefined || docs.length === 0){ //Add all documents as missing
-			missingUsers = users
-		} else if(docs.length !== users.length) { //Add only missing documents
-			let foundIds = docs.map(x => x.discordId);
-			missingUsers = users.filter(x => foundIds.indexOf(x.discordId) === -1);
-		}
-		if (missingUsers.length > 0) { //If any documents are missing then add them
-			let missingDocs = missingUsers.map(function(user){return {discordId: user.discordId, name: user.name, money: 0}});
-			db.insert(missingDocs, function(err, doc){
-				if(err){
-					return callback('I encountered an error adding currency to users');
-				}
-			});
-			//Append the missing docs so they will be updated
-			//These will be missing the document ids but should contain the discordId
-			docs = docs.concat(missingDocs);
-		}
+		let amount = parseInt(text.match(/[\d]+/));
 
-		//Add the money to the retrieved user
-		return db.update({ $or: docs}, {$inc: {money: amount}}, { upsert: true, multi: true, returnUpdatedDocs: true }, function(err, count, docs){
+		if(!isPositiveInteger(amount)){
+			return callback('Invalid amount passed.');
+		}
+		return upsertUsers(db, users, amount, function(err){
 			if(err){
-				return callback('I encountered an error adding currency to users');
+				console.error(err);
+				return callback('I encountered an error trying to add currency to user');
 			}
-			if(docs === null || docs === undefined || docs.length === 0){
-				return callback('I did not find any users with those names');
-			}
-			docs = docs.sort(function(a, b){return a.name < b.name ? -1 : a.name > b.name ? 1 : 0;});
-			let reply = 'I added ' + amount + ' ' + currencyName + ' to ';
-			let index = 0;
-			for(index = 0; index < docs.length; index++){
-				let user = docs[index];
-				reply = reply + (index > 0 ? ', ' : '') + user.name;
-			}
-			return callback(null, reply); //TODO: print all user names
+			return getSuccessfulReply(users, amount, currencyName, callback);
 		});
 	});
 }

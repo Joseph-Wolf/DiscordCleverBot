@@ -1,7 +1,6 @@
 "use strict";
 
 const assert = require('assert');
-const choose = require('../../src/util/choose.js');
 const chooseMessage = require('../../src/messages/choose.js');
 const optionsList = ['one', 'two', 'three', 'four'];
 const numberOfTrials = 10;

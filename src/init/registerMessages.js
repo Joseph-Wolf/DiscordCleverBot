@@ -23,7 +23,10 @@ module.exports = function registerMessages(db, discord, cleverbot){
 	discord.registerMessage(/currency.+?name/i, currencySetName, {db: db, key: CurrencyNameSettingKey, registerMessagesCallback: function(){
 		registerMessages(db, discord, cleverbot);
 	}});
-	db.find({key: CurrencyNameSettingKey}).limit(1).exec(function(err, doc){
+	db.find({key: CurrencyNameSettingKey}).limit(1).toArray(function(err, doc){
+		if(err){
+			console.log(err);
+		}
 		if(err || doc === null || doc === undefined || doc.value === null || doc.value === undefined){
 			doc = {value: CurrencyNameDefaultValue};
 		}

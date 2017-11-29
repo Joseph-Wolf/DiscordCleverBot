@@ -1,12 +1,12 @@
 "use strict";
 
-const getRandomInt = require('./getRandomInt.js');
+const randomInt = require('random-int');
 
 module.exports = function(desiredCategory, callback) {
 	let randomSizes = [240, 250, 300, 350, 400, 450, 500, 550, 600];
 	let availableCategories = ['abstract', 'animals', 'cats', 'city', 'food', 'nature', 'dogs'];
-	let width = randomSizes[getRandomInt(0, randomSizes.length)];
-	let height = randomSizes[getRandomInt(0, randomSizes.length)];
+	let width = randomSizes[randomInt(randomSizes.length)];
+	let height = randomSizes[randomInt(randomSizes.length)];
 	let urlParts = [width, height, desiredCategory];
 
 	if(availableCategories.includes(desiredCategory.toLowerCase())) {

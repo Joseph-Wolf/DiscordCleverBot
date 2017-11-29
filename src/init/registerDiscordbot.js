@@ -24,7 +24,7 @@ function authenticateDiscordWithKey(key, discord, callback){
 	});
 }
 module.exports = function (db, discord, cleverbot){
-	return db.find({key: discord.DBKey}).limit(1).exec(function(err, docs){
+	return db.find({key: discord.DBKey}).limit(1).toArray(function(err, docs){
 		if(err || docs === null || docs.length === 0) {
 			docs = [{key: discord.DBKey, value: null}];
 		}
@@ -36,7 +36,7 @@ module.exports = function (db, discord, cleverbot){
 				console.error('rejected Discord key');
 				return;
 			}
-			db.update({key: discord.DBKey}, {$set:{value: key}}, {milti: false, upsert: true}, function(err){
+			db.update({key: discord.DBKey}, {$set:{value: key}}, {upsert: true}, function(err){
 				if(err){
 					console.error(err);
 					return;
