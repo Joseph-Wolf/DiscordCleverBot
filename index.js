@@ -1,3 +1,5 @@
+require('dotenv').config();
+
 const MongoClient = require('mongodb').MongoClient;
 const config = require('./config.json');
 const Discordbot = require('./src/discordbot.js');

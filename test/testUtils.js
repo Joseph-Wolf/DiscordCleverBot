@@ -1,14 +1,15 @@
 "use strict";
 
+require('dotenv').config();
+
 const MongoClient = require('mongodb').MongoClient;
 const randomString = require('random-string');
 
-let dbURL = 'mongodb://localhost:27017/test';
 let server = null;
 
 module.exports = {
 	dbBefore: function(callback){
-		return MongoClient.connect(dbURL, function(err, db){
+		return MongoClient.connect(process.env.DBURL, function(err, db){
 			if(err){
 				console.error(err);
 			}

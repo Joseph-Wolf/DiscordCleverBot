@@ -24,6 +24,7 @@
     "node": "6.9.5"
   },
   "devDependencies": {
+    "dotenv": "^4.0.0",
     "fs": "0.0.1-security",
     "mocha": "^3.5.0",
     "rimraf": "^2.6.1",
