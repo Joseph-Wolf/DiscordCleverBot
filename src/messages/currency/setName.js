@@ -47,6 +47,9 @@ module.exports = function(err, callback, params){
 				console.error(err);
 				return callback('I encountered an error setting the currency name.');
 			}
+			if(registerMessagesCallback){ //Reset all the messages after changing something one of them depends on.
+				registerMessagesCallback();
+			}
 			return callback(null, 'I set your currency to ' + value);
 		});
 	});

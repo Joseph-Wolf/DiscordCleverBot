@@ -7,8 +7,7 @@ module.exports = function (db, cleverbot){
 		}
 		let doc = items[0];
 		if(doc === null || doc === undefined || doc.value === null || doc.value === undefined) {
-			console.info('No cleverbot credentials are recorded');
-			doc = {value: {user: null, pass: null}};
+			return console.info('No cleverbot credentials are recorded');
 		}
 		return cleverbot.authenticate(doc.value, function(err, accepted){
 			if(err){

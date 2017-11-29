@@ -61,6 +61,9 @@ module.exports = function(err, callback, params){
 			if(foundUsers === null || foundUsers === undefined  || foundUsers.length === 0){
 				return callback('I did not find any users with those names');
 			}
+			for(let index = 0; index < foundUsers.length; index++){
+				foundUsers[index].name = users.filter(function(user){return user.discordId === foundUsers[index].discordId})[0].name;
+			}
 			let usersSortedByName = foundUsers.sort(function(a, b){return a.name < b.name ? -1 : a.name > b.name ? 1 : 0;});
 			return generateReply(usersSortedByName, currencyName, callback);
 		});
