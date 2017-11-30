@@ -78,7 +78,7 @@ module.exports = function(err, callback, params){
 						console.error(err);
 						return callback('I encountered an error taking currency from users.')
 					}
-					let sortedUserNames = users.sort(function(a, b){return a.name < b.name ? -1 : a.name > b.name ? 1 : 0;});
+					let sortedUserNames = users.sort(function(a, b){return a.name < b.name ? -1 : a.name > b.name ? 1 : 0;}).map(x => x.name);
 					return constructSuccessfulReply(sortedUserNames, amount, currencyName, callback);
 				});
 			}
