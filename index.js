@@ -1,5 +1,3 @@
-require('dotenv').config();
-
 const express = require('express');
 const app = express();
 const MongoClient = require('mongodb').MongoClient;
@@ -7,6 +5,8 @@ const config = require('./config.json');
 const Discordbot = require('./src/discordbot.js');
 const Cleverbot = require('./src/cleverbot.js');
 const init = require('./src/init.js');
+
+if (process.env.NODE_ENV !== 'production') require('dotenv').config();
 
 MongoClient.connect(process.env.DBURL, function(err, db){
 	init(db.collection('mycollection'), new Discordbot(), new Cleverbot(), config);
