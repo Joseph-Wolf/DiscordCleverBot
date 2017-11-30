@@ -1,40 +1,54 @@
 "use strict";
 
-module.exports = function(err, callback, params){
-	if(err || params === null || params === undefined || params.text === null || params.text === undefined || params.db === null || params.db === undefined || params.cleverbot === null || params.cleverbot === undefined){
+function validate(params, callback){
+	if(params === null || params === undefined ){
+		console.error('null or undefined params');
+		return callback('There was an error logging into cleverbot');
+	}
+	if(params.text === null || params.text === undefined){
+		console.error('null or undefined text');
+		return callback('There was an error logging into cleverbot');
+	}
+	if(params.db === null || params.db === undefined){
+		console.error('null or undefined db');
+		return callback('There was an error logging into cleverbot');
+	}
+	if(params.cleverbot === null || params.cleverbot === undefined){
+		console.error('null or undefined cleverbot');
 		return callback('There was an error logging into cleverbot');
 	}
 	if(!params.isAdmin){
 		return callback('You must be an administrator to use this command');
 	}
-	let text = params.text;
-	let db = params.db;
-	let cleverbot = params.cleverbot;
-	let user = text.split(/:/)[0].match(/[\S]+$/)[0];
-	let key = text.split(/:/)[1].match(/^[\S]+/)[0];
-	
-	//Will this work without a require?
-	cleverbot.authenticate({user: user, key: key}, function(err, accepted){
+	return callback(null);
+}
+
+function upsertCredentials(db, dbKey, value, callback){
+	db.update({key: dbKey}, {$set: {value: value}}, {upsert: true}, callback);
+}
+
+module.exports = function(err, callback, params){
+	if(err){
+		console.error(err);
+		return callback('I encountered an error setting the cleverbot credentials');
+	}
+	return validate(params, function(err){
 		if(err){
-			console.error(err);
-			return callback('Failed to authenticate with provided credentials.\n(auth|login) cleverbot {user}:{token}');
+			return callback(err);
 		}
-		let query = {key: cleverbot.DBKey};
-		return data.find(query).limit(1).toArray(function(err, doc){
+		let text = params.text;
+		let db = params.db;
+		let cleverbot = params.cleverbot;
+		let user = text.split(/:/)[0].match(/[\S]+$/)[0];
+		let key = text.split(/:/)[1].match(/^[\S]+/)[0];
+		
+		//Will this work without a require?
+		cleverbot.authenticate({user: user, pass: key}, function(err, accepted){
 			if(err){
 				console.error(err);
+				return callback('Failed to authenticate with provided credentials.\n(auth|login) cleverbot {user}:{token}');
 			}
-			if(err || doc === null || doc === undefined || doc.length === 0){
-				query.value = accepted;
-				return data.insert(query, function(err, doc){
-					if(err){
-						console.error(err);
-						return callback("Error setting cleverbot credentials in the Database");
-					}
-					return callback(null, 'Success!!');
-				});
-			}
-			return data.update(doc[0], {$set: {value: accepted}}, function(err, doc){
+			return upsertCredentials(db, cleverbot.DBKey, accepted, function(err){
 				if(err){
 					console.error(err);
 					return callback("Error setting cleverbot credentials in the Database");
