@@ -29,6 +29,6 @@
   },
   "scripts": {
     "test": "mocha --recursive",
-    "start": "node index.js"
+    "start": "node web.js"
   }
 }
