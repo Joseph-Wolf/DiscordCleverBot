@@ -23,7 +23,7 @@ function authenticateDiscordWithKey(key, discord, callback){
 		return callback(null, accepted);
 	});
 }
-module.exports = function (db, discord, cleverbot){
+module.exports = function (db, discord){
 	return db.find({key: discord.DBKey}).limit(1).toArray(function(err, docs){
 		if(err || docs === null || docs.length === 0) {
 			docs = [{key: discord.DBKey, value: null}];
@@ -41,7 +41,7 @@ module.exports = function (db, discord, cleverbot){
 					console.error(err);
 					return;
 				}
-				registerMessages(db, discord, cleverbot);
+				registerMessages(db, discord);
 				registerWelcomeUsers(db, discord);
 				return;
 			});

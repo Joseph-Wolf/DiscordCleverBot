@@ -1,5 +1,7 @@
 "use strict";
 
+const betterCleverbotIO = require('better-cleverbot-io');
+
 function validate(params, callback){
 	if(params === null || params === undefined ){
 		console.error('null or undefined params');
@@ -13,8 +15,8 @@ function validate(params, callback){
 		console.error('null or undefined db');
 		return callback('There was an error logging into cleverbot');
 	}
-	if(params.cleverbot === null || params.cleverbot === undefined){
-		console.error('null or undefined cleverbot');
+	if(params.key === null || params.key === undefined){
+		console.error('null or undefined key');
 		return callback('There was an error logging into cleverbot');
 	}
 	if(!params.isAdmin){
@@ -23,8 +25,17 @@ function validate(params, callback){
 	return callback(null);
 }
 
-function upsertCredentials(db, dbKey, value, callback){
-	db.update({key: dbKey}, {$set: {value: value}}, {upsert: true}, callback);
+function generateSettingValue(credentialsUser, credentialsKey){
+	return {user: credentialsUser, key: credentialsKey};
+}
+
+function upsertCredentials(db, key, value, callback){
+	return db.update({key: key}, {$set: {value: value}}, {upsert: true}, callback);
+}
+
+function deleteMessage(){
+	//TODO: figure out how to delete the message for security
+	//message.delete().catch(callback('I can not delete the message your credentials.\nPlease grant permission or manually remove them for security.'));
 }
 
 module.exports = function(err, params, callback){
@@ -38,26 +49,26 @@ module.exports = function(err, params, callback){
 		}
 		let text = params.text;
 		let db = params.db;
-		let cleverbot = params.cleverbot;
-		let user = text.split(/:/)[0].match(/[\S]+$/)[0];
-		let key = text.split(/:/)[1].match(/^[\S]+/)[0];
+		let settingKey = params.key;
+		let cleverbot = (params.cleverbot || betterCleverbotIO);
+		let credentialUser = text.split(/:/)[0].match(/[\S]+$/)[0];
+		let credentialKey = text.split(/:/)[1].match(/^[\S]+/)[0];
 		
-		//Will this work without a require?
-		cleverbot.authenticate({user: user, pass: key}, function(err, accepted){
+		let value = generateSettingValue(credentialUser, credentialKey);
+
+		return upsertCredentials(db, settingKey, value, function(err){
 			if(err){
 				console.error(err);
-				return callback('Failed to authenticate with provided credentials.\n(auth|login) cleverbot {user}:{token}');
+				return callback('Error setting cleverbot credentials in the Database');
 			}
-			return upsertCredentials(db, cleverbot.DBKey, accepted, function(err){
-				if(err){
-					console.error(err);
-					return callback("Error setting cleverbot credentials in the Database");
-				}
+			return new cleverbot(value).create().then(() => {
+				deleteMessage();
 				return callback(null, 'Success!!');
+			}).catch(err => {
+				console.error(err);
+				deleteMessage();
+				return callback('Invalid credentials.');
 			});
 		});
 	});
-	
-	//TODO: figure out how to delete the message for security
-	//message.delete().catch(callback('I can not delete the message your credentials.\nPlease grant permission or manually remove them for security.'));
 }
