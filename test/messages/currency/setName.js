@@ -5,6 +5,10 @@ const randomString = require('random-string');
 const testUtils = require('../../testUtils.js');
 const setName = require('../../../src/messages/currency/setName.js');
 
+function generateName(){
+	return randomString().replace(/s+$/, ''); //Removes trailing s characters;
+}
+
 function generateMessage(name){
 	return 'set currency name to ' + name;
 }
@@ -21,7 +25,7 @@ describe('Currency', function(){
 			});
 		});
 		it('should require expected parameters', function(done){
-			let expected = randomString();
+			let expected = generateName();
 			let key = randomString();
 			return testUtils.dbExecute(function(err, collection){
 				if(err){
@@ -51,7 +55,7 @@ describe('Currency', function(){
 			});
 		});
 		it('should fail for non admins', function(done){
-			let expected = randomString();
+			let expected = generateName();
 			let message = generateMessage(expected);
 			let query = {key: randomString()};
 			return testUtils.dbExecute(function(err, collection){
@@ -82,7 +86,7 @@ describe('Currency', function(){
 			});
 		});
 		it('should trim any trailing s characters', function(done){
-			let expected = randomString();
+			let expected = generateName();
 			let message = generateMessage(expected + 's');
 			let query = {key: randomString()};
 			return testUtils.dbExecute(function(err, collection){
@@ -104,7 +108,7 @@ describe('Currency', function(){
 			});
 		});
 		it('should set valid name in the database', function(done){
-			let expected = randomString();
+			let expected = generateName();
 			let message = generateMessage(expected);
 			let query = {key: randomString()};
 			return testUtils.dbExecute(function(err, collection){
