@@ -45,25 +45,6 @@ module.exports = class discord{
 			return; //Don't return the callback or else it will get used
 		});
 	}
-	authenticate(value, callback){
-		let self = this;
-		self.client.login(value).then(function(accepted){
-			return callback(null, accepted);
-		}).catch(function(err){
-			return callback(err);
-		});
-	}
-	welcomeUsers(enable, message){
-		let self = this;
-		if(message === null){
-			message = `Welcome to ${guild.name} ${member.username}!!!`;
-		}
-		if(enable){
-			self.client.on('guildMemberAdd', (guild, member) =>  guild.defaultChannel.sendMessage(message)); //Message to display when adding a member
-		} else {
-			self.client.removeAllListeners('guildMemberAdd'); //Remove any existing welcome messages
-		}
-	}
 	registerMessage(expression, callback, additionalParams){
 		let self = this;
 		if(additionalParams === null || additionalParams === undefined){

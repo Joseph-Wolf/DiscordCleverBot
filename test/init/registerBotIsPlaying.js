@@ -2,7 +2,6 @@
 
 const assert = require('assert');
 const sinon = require('sinon')
-const CronJob = require('cron').CronJob;
 const registerBotIsPlaying = require('../../src/init/registerBotIsPlaying.js');
 
 describe('registerBotIsPlaying', function(){
