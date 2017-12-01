@@ -46,7 +46,7 @@ function constructInvalidAmountReply(users, foundUsers, callback){
 	return callback(reply);
 }
 
-module.exports = function(err, callback, params){
+module.exports = function(err, params, callback){
 	if(err){
 		console.error(err);
 		return callback('I encountered an error subtracting currency.');

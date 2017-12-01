@@ -26,7 +26,7 @@ function upsertNewName(db, keyValue, newName, callback){
 	return db.update({key: keyValue}, {$set: {value: newName}}, {upsert: true}, callback);
 }
 
-module.exports = function(err, callback, params){
+module.exports = function(err, params, callback){
 	if(err){
 		console.error(err);
 		return callback('I encountered an error setting the currency name.');

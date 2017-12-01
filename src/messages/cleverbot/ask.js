@@ -16,7 +16,7 @@ function validate(params, callback){
 	return callback(null);
 }
 
-module.exports = function(err, callback, params){
+module.exports = function(err, params, callback){
 	if(err){
 		console.log(err);
 		return callback('I encountered an error asking cleverbot.');

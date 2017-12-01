@@ -76,7 +76,7 @@ describe('discordbot', function(){
 		});
 		it('should pass an err, callback, and params', function(done){
 			let expectedText = 'hello world';
-			bot.registerMessage(/hello/, function(err, callback, params){
+			bot.registerMessage(/hello/, function(err, params, callback){
 				if(err){
 					return done(err);
 				}
@@ -96,7 +96,7 @@ describe('discordbot', function(){
 			let testUser = {id:testID, toString: function(){return testName;}};
 			let expectedUser = {discordId: testID, name: testName};
 			testMessage.mentions.users.testArray = [testUser];
-			bot.registerMessage(/hello/, function(err, callback, params){
+			bot.registerMessage(/hello/, function(err, params, callback){
 				if(err){
 					return done(err);
 				}
@@ -121,7 +121,7 @@ describe('discordbot', function(){
 				expectedUsers.push({discordId: testID, name: testName});
 			}
 			testMessage.mentions.users.testArray = testUsers;
-			bot.registerMessage(/hello/, function(err, callback, params){
+			bot.registerMessage(/hello/, function(err, params, callback){
 				if(err){
 					return done(err);
 				}
@@ -152,7 +152,7 @@ describe('discordbot', function(){
 				expectedUsers.push({discordId:id2, name: name2});
 			}
 			testMessage.mentions.roles.testArray = new MockCollection([new MockCollection(usersInRole1), new MockCollection(usersInRole2)]);
-			bot.registerMessage(/hello/, function(err, callback, params){
+			bot.registerMessage(/hello/, function(err, params, callback){
 				if(err){
 					return done(err);
 				}
@@ -182,7 +182,7 @@ describe('discordbot', function(){
 			//Push bot onto list
 			testUsers.push(bot.client.user);
 			testMessage.mentions.users.testArray = testUsers;
-			bot.registerMessage(/hello/, function(err, callback, params){
+			bot.registerMessage(/hello/, function(err, params, callback){
 				if(err){
 					return done(err);
 				}

@@ -33,12 +33,12 @@ module.exports = class discord{
 							});
 						});
 						additionalParams.isAdmin = message.member.hasPermission('ADMINISTRATOR');
-						return callback(null, function(err, reply){
+						return callback(null, additionalParams, function(err, reply){
 							if(err){
 								return message.reply(err); //Should be sanatized error message
 							}
 							return message.reply(reply);
-						}, additionalParams); //Execute the callback with the message
+						}); //Execute the callback with the message
 					}
 				}
 			}

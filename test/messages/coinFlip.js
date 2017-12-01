@@ -8,7 +8,7 @@ const numberOfTrials = 10;
 describe('coinFlip', function(){
 	describe('Message', function(){
 		it('should return a reply', function(done){
-			coinFlipMessage(null, function(err, reply){
+			coinFlipMessage(null, null, function(err, reply){
 				if(err){
 					return done(err);
 				}

@@ -5,12 +5,16 @@ const randomString = require('random-string');
 const testUtils = require('../../testUtils.js');
 const currencySubtractMessage = require('../../../src/messages/currency/subtract.js');
 
+function generateMessage(amount){
+	return 'take ' + amount;
+}
+
 describe('Currency', function(){
 	before(testUtils.dbBefore);
 	describe('Subtract', function(){
 		describe('Message', function(){
 			it('should return sanatize error message', function(done){
-				return currencySubtractMessage(true, function(err, reply){
+				return currencySubtractMessage(true, null, function(err, reply){
 					if(err){
 						return done();
 					}
@@ -18,7 +22,7 @@ describe('Currency', function(){
 				});
 			});
 			it('should return error message for null text', function(done){
-				return currencySubtractMessage(null, function(err, reply){
+				return currencySubtractMessage(null, null, function(err, reply){
 					if(err){
 						return done();
 					}
@@ -26,23 +30,23 @@ describe('Currency', function(){
 				});
 			});
 			it('should return error message for null text', function(done){
-				return currencySubtractMessage(null, function(err, reply){
+				return currencySubtractMessage(null, {text: 'hello', users: null, isAdmin: true}, function(err, reply){
 					if(err){
-						return currencySubtractMessage(null, function(err, reply){
+						return currencySubtractMessage(null, {text: 'hello', users: [], isAdmin: true}, function(err, reply){
 							if(err){
 								return done();
 							}
 							return done('Did not reuturn error.');
-						}, {text: 'hello', users: [], isAdmin: true});
+						});
 					}
 					return done('Did not reuturn error.');
-				}, {text: 'hello', users: null, isAdmin: true});
+				});
 			});
 			it('should return error message for non admins', function(done){
 				let startingBallance = 66;
 				let amountToTake = 55;
 				let users = [{discordId: randomString(), name: randomString(), money: startingBallance, expectedBallance: startingBallance - amountToTake}];
-				let message = 'Please take ' + amountToTake;
+				let message = generateMessage(amountToTake);
 				return testUtils.dbExecute(function(err, collection){
 					if(err){
 						return done(err);
@@ -51,12 +55,12 @@ describe('Currency', function(){
 						if(err){
 							return done(err);
 						}
-						return currencySubtractMessage(null, function(err){
+						return currencySubtractMessage(null, {text: message, db: collection, users: users, isAdmin: false}, function(err){
 							if(err){
 								return done();
 							}
 							return done('Did not reuturn error.');
-						}, {text: message, db: collection, users: users, isAdmin: false});
+						});
 					});
 				});
 			});
@@ -64,24 +68,24 @@ describe('Currency', function(){
 				let startingBallance = 54;
 				let amountToTake = 55;
 				let user = {discordId: randomString(), name: randomString(), money: startingBallance};
-				let message = 'Please take ' + amountToTake;
+				let message = generateMessage(amountToTake);
 				return testUtils.dbExecute(function(err, collection){
 					if(err){
 						return done(err);
 					}
-					return currencySubtractMessage(null, function(err, ballance){
+					return currencySubtractMessage(null, {text: message, db: collection, users: [user]}, function(err, ballance){
 						if(err){
 							return done();
 						}
 						return done('Returned successful despite not having enough funds');
-					}, {text: message, db: collection, users: [user]});
+					});
 				});
 			});
 			it('should return a reply', function(done){
 				let startingBallance = 66;
 				let amountToTake = 55;
 				let users = [{discordId: randomString(), name: randomString(), money: startingBallance, expectedBallance: startingBallance - amountToTake}];
-				let message = 'Please take ' + amountToTake;
+				let message = generateMessage(amountToTake);
 				let userIds = users.map(function(user){return {discordId: user.discordId}});
 				return testUtils.dbExecute(function(err, collection){
 					if(err){
@@ -91,7 +95,7 @@ describe('Currency', function(){
 						if(err){
 							return done(err);
 						}
-						return currencySubtractMessage(null, function(err){
+						return currencySubtractMessage(null, {text: message, db: collection, users: users, isAdmin: true}, function(err){
 							if(err){
 								return done(err);
 							}
@@ -104,7 +108,7 @@ describe('Currency', function(){
 								assert.equal(matchedUser.expectedBallance, doc.money);
 								return done();
 							});
-						}, {text: message, db: collection, users: users, isAdmin: true});
+						});
 					});
 				});
 			});
@@ -116,7 +120,7 @@ describe('Currency', function(){
 				for(let index = 0; index < numberOfUsers; index++){
 					users.push({discordId: randomString(), name: randomString(), money: startingBallance, expectedBallance: startingBallance - amountToTake});
 				}
-				let message = 'Please take ' + amountToTake;
+				let message = generateMessage(amountToTake);
 				let userIds = users.map(function(user){return {discordId: user.discordId}});
 				return testUtils.dbExecute(function(err, collection){
 					if(err){
@@ -126,7 +130,7 @@ describe('Currency', function(){
 						if(err){
 							return done(err);
 						}
-						return currencySubtractMessage(null, function(err){
+						return currencySubtractMessage(null, {text: message, db: collection, users: users, isAdmin: true}, function(err){
 							if(err){
 								return done(err);
 							}
@@ -140,7 +144,7 @@ describe('Currency', function(){
 								}
 								return done();
 							});
-						}, {text: message, db: collection, users: users, isAdmin: true});
+						});
 					});
 				});
 			});
@@ -154,7 +158,7 @@ describe('Currency', function(){
 					users.push({discordId: randomString(), name: randomString(), money: startingBallance});
 					expectedBallance.push(startingBallance - amountToTake);
 				}
-				let message = 'Please take ' + amountToTake;
+				let message = generateMessage(amountToTake);
 				let userIds = users.map(function(user){return {discordId: user.discordId}});
 				return testUtils.dbExecute(function(err, collection){
 					if(err){
@@ -166,7 +170,7 @@ describe('Currency', function(){
 						}
 						//Add the missing user
 						users.push({discordId: randomString(), name: randomString(), money: startingBallance});
-						return currencySubtractMessage(null, function(err){
+						return currencySubtractMessage(null, {text: message, db: collection, users: users, isAdmin: true}, function(err){
 							if(err){
 								return collection.find({$or: userIds}).toArray(function(err, docs){
 									if(err){
@@ -180,7 +184,7 @@ describe('Currency', function(){
 								});
 							}
 							return done('Should have failed because a nonexistant user was referenced');
-						}, {text: message, db: collection, users: users, isAdmin: true});
+						});
 					});
 				});
 			});
@@ -196,7 +200,7 @@ describe('Currency', function(){
 				}
 				//Make sure one user does not have enough
 				users[0].money = amountToTake - 1;
-				let message = 'Please take ' + amountToTake;
+				let message = generateMessage(amountToTake);
 				let userIds = users.map(function(user){return {discordId: user.discordId}});
 				return testUtils.dbExecute(function(err, collection){
 					if(err){
@@ -206,7 +210,7 @@ describe('Currency', function(){
 						if(err){
 							return done(err);
 						}
-						return currencySubtractMessage(null, function(err){
+						return currencySubtractMessage(null, {text: message, db: collection, users: users, isAdmin: true}, function(err){
 							if(err){
 								return collection.find({$or: userIds}).toArray(function(err, docs){
 									if(err){
@@ -220,7 +224,7 @@ describe('Currency', function(){
 								});
 							}
 							return done('Should have failed because a nonexistant user was referenced');
-						}, {text: message, db: collection, users: users, isAdmin: true});
+						});
 					});
 				});
 			});

@@ -7,7 +7,7 @@ const showMeMessage = require('../../src/messages/showMe.js');
 describe('showMe', function(){
 	describe('Message', function(){
 		it('should return sanatized error message', function(done){
-			showMeMessage(true, function(err){
+			showMeMessage(true, null, function(err){
 				if(err){
 					return done();
 				}
@@ -15,7 +15,7 @@ describe('showMe', function(){
 			});
 		});
 		it('should return error is text message is null', function(done){
-			showMeMessage(null, function(err){
+			showMeMessage(null, null, function(err){
 				if(err){
 					return done();
 				}
@@ -23,16 +23,16 @@ describe('showMe', function(){
 			});
 		});
 		it('should return error message for invalid subject', function(done){
-			showMeMessage(null, function(err, reply){
+			showMeMessage(null, {text: "show me fkdsflsjk"}, function(err, reply){
 				if(err){
 					return done();
 				}
 				return done('Did not provide user with command list');
-			}, {text: "show me fkdsflsjk"});
+			});
 		});
 		it('should return a reply', function(done){
 			let message = 'Please show me dogs';
-			showMeMessage(null, done, {text: message});
+			showMeMessage(null, {text: message}, done);
 		});
 	});
 });

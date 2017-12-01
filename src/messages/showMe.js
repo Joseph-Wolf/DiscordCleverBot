@@ -2,7 +2,7 @@
 
 const showMe = require('../util/showMe.js');
 
-module.exports = function(err, callback, params){
+module.exports = function(err, params, callback){
 	if(err || params === null || params === undefined || params.text === null || params.text === undefined){
 		return callback("I can't show you anything");
 	}

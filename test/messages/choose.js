@@ -8,7 +8,7 @@ const numberOfTrials = 10;
 describe('Choose', function(){
 	describe('Message', function(){
 		it('should return sanatize error message', function(done){
-			chooseMessage(true, function(err, reply){
+			chooseMessage(true, null, function(err, reply){
 				if(err){
 					return done();
 				}
@@ -16,7 +16,7 @@ describe('Choose', function(){
 			});
 		});
 		it('should return error message for null text', function(done){
-			chooseMessage(null, function(err, reply){
+			chooseMessage(null, null, function(err, reply){
 				if(err){
 					return done();
 				}
@@ -25,7 +25,7 @@ describe('Choose', function(){
 		});
 		it('should return a reply', function(done){
 			let message = 'Please choose x, y, or z.';
-			chooseMessage(null, done, {text: message})
+			chooseMessage(null, {text: message}, done);
 		});
 	});
 });

@@ -7,7 +7,7 @@ const cleverbotLoginMessage = require('../../../src/messages/cleverbot/login.js'
 describe('Message', function(){
 	describe('Login', function(){
 		it('should return sanatize error message', function(done){
-		cleverbotLoginMessage(true, function(err, reply){
+		return cleverbotLoginMessage(true, null, function(err, reply){
 			if(err){
 				return done();
 			}
@@ -15,7 +15,7 @@ describe('Message', function(){
 		});
 		});
 		it('should return error message for null text', function(done){
-			cleverbotLoginMessage(null, function(err, reply){
+			return cleverbotLoginMessage(null, null, function(err, reply){
 				if(err){
 					return done();
 				}
@@ -26,7 +26,7 @@ describe('Message', function(){
 		it.skip('should return a reply', function(done){
 			let message = 'Please choose x, y, or z.';
 			let bot = new cleverbot();
-			cleverbotLoginMessage(null, done, {text: message, cleverbot: bot})
+			return cleverbotLoginMessage(null, {text: message, cleverbot: bot}, done);
 		});
 	});
 });
