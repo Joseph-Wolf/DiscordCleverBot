@@ -9,7 +9,9 @@ const init = require('./src/init.js');
 require('dotenv').config();
 
 MongoClient.connect(process.env.DBURL, function(err, db){
-	init(db.collection('mycollection'), new Discordbot(), new Cleverbot(), config);
+	let settings = db.collection('settings');
+	let users = db.collection('users');
+	init(db.collection('mycollection'), new Discordbot(), config);
 });
 
 app.set('port', (process.env.PORT || 5000));
