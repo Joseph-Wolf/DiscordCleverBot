@@ -50,12 +50,8 @@ module.exports = function(settings, users, client, config, callback){
 		if(err){
 			return callback(err);
 		}
-		console.log('here');
-		console.log(client.removeAllListeners);
-		let messages = registerMessages(settings, users, client);
-		console.log('here2');
-		console.log(client.removeAllListeners);
-		return registerMessage(client, messages, function(err){
+		let messages = registerMessage(settings, users, client);
+		return registerMessages(client, messages, function(err){
 			if(err){
 				return callback(err);
 			}

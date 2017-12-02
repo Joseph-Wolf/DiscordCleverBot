@@ -1,7 +1,6 @@
 "use strict";
 
 module.exports = function(client, messages, callback){
-	console.log(client.removeAllListeners);
 	client.removeAllListeners('message'); //Starts with a clean message event
 	client.on('message', message => {
 		let content = message.cleanContent.trim() //trim any excess spaces and make it a happy string
