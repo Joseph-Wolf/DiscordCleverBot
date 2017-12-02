@@ -44,7 +44,7 @@ module.exports = function (client, params, callback){
 			}
 			return;
 		}
-		let job = new CronJob({ //A job that changes the game the bot is playing periodically
+		new CronJob({ //A job that changes the game the bot is playing periodically
 			cronTime: params.cronTime,
 			onTick: function(){
 				return client.user.setGame(randomItem(params.options));
@@ -52,8 +52,8 @@ module.exports = function (client, params, callback){
 			start: params.start
 		});
 		if(callback){
-			return callback(null, job);
+			return callback();
 		}
-		return job;
+		return;
 	});
 };

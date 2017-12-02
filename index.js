@@ -1,4 +1,7 @@
 const Discord = require('discord.js');
+const express = require('express');
+const http = require('http');
+const app = express();
 const MongoClient = require('mongodb').MongoClient;
 const config = require('./config.json');
 const init = require('./src/init.js');
@@ -10,6 +13,26 @@ MongoClient.connect(process.env.DBURL, function(err, db){
 		if(err){
 			throw err;
 		}
-		return console.log(reply);
+		if(reply){
+			console.log(reply);
+		}
+		return;
 	});
 });
+
+app.set('port', (process.env.PORT || 5000));
+app.use(express.static(__dirname + '/public'));
+
+app.get('/', function(request, response) {
+	response.send('Hello World!');
+});
+
+app.listen(app.get('port'), function() {
+	console.log('Node app is running at localhost:' + app.get('port'));
+});
+
+console.log(process.env.HEROKU_APP_NAME);
+//Ping the app periodically to keep it from sleeping
+setInterval(function() {
+	http.get(process.env.HEROKU_APP_NAME);
+}, 300000); // every 5 minutes (300000)

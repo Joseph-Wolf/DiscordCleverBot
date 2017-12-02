@@ -3,7 +3,6 @@
 const registerDiscordbot = require('./init/registerDiscordbot.js');
 const registerBotIsPlaying = require('./init/registerBotIsPlaying.js');
 const registerMessages = require('./init/registerMessages.js');
-const registerWebserver = require('./init/registerWebserver.js');
 const choose = require('./messages/choose.js');
 const showMe = require('./messages/showMe.js');
 const coinFlip = require('./messages/coinFlip.js');
@@ -55,12 +54,7 @@ module.exports = function(settings, users, client, config, callback){
 			if(err){
 				return callback(err);
 			}
-			return registerBotIsPlaying(client, config.botIsPlaying, function(err){ //TODO: read config from the settingsDB
-				if(err){
-					return callback(err);
-				}
-				return registerWebserver(callback);
-			});
+			return registerBotIsPlaying(client, config.botIsPlaying, callback); //TODO: read config from the settingsDB
 		});
 	});
 };
