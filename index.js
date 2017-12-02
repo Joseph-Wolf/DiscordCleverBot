@@ -31,8 +31,9 @@ app.listen(app.get('port'), function() {
 	console.log('Node app is running at localhost:' + app.get('port'));
 });
 
-console.log(process.env.HEROKU_APP_NAME);
-//Ping the app periodically to keep it from sleeping
-setInterval(function() {
-	http.get(process.env.HEROKU_APP_NAME);
-}, 300000); // every 5 minutes (300000)
+if(process.env.APP_URL){
+	//Ping the app periodically to keep it from sleeping
+	setInterval(function() {
+		http.get(process.env.APP_URL);
+	}, 300000); // every 5 minutes (300000)
+}
