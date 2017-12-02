@@ -3,7 +3,19 @@
 const randomItem = require('random-item');
 const CronJob = require('cron').CronJob;
 
-function validate(params, callback){
+function validate(client, params, callback){
+	if(client === null || client === undefined){
+		console.error('null or undefined client');
+		return callback('Invalid input parameters.');
+	}
+	if(client.user === null || client.user === undefined){
+		console.error('null or undefined user');
+		return callback('Invalid input parameters.');
+	}
+	if(client.user.setGame === null || client.user.setGame === undefined){
+		console.error('null or undefined setGame');
+		return callback('Invalid input parameters.');
+	}
 	if(params === null || params === undefined){
 		console.error('null or undefined params');
 		return callback('Invalid input parameters.');
@@ -22,23 +34,26 @@ function validate(params, callback){
 	}
 	return callback(null);
 }
-//TODO: if values are missing from settingsDB convert them from the config.json
-//TODO: read from the settingsDB
-module.exports = function (discord, params){
-	return validate(params, function(err){
+
+module.exports = function (client, params, callback){
+	return validate(client, params, function(err){
 		if(err){
-			return console.error(err);
+			console.error(err);
+			if(callback){
+				return callback(err);
+			}
+			return;
 		}
-		return new CronJob({ //A job that changes the game the bot is playing periodically
+		let job = new CronJob({ //A job that changes the game the bot is playing periodically
 			cronTime: params.cronTime,
 			onTick: function(){
-				if(discord === null || discord === undefined || discord.client === null || discord.client === undefined || discord.client.user === null || discord.client.user === undefined) {
-					return; //Might not yet be initialized
-				}
-				let game = randomItem(params.options);
-				return discord.client.user.setGame(game);
+				return client.user.setGame(randomItem(params.options));
 			},
 			start: params.start
 		});
+		if(callback){
+			return callback(null, job);
+		}
+		return job;
 	});
 };

@@ -6,7 +6,7 @@ const testUtils = require('../../testUtils.js');
 const setName = require('../../../src/messages/currency/setName.js');
 
 function generateName(){
-	return randomString().replace(/s+$/, ''); //Removes trailing s characters;
+	return randomString().replace(/s+$/i, ''); //Removes trailing s characters;
 }
 
 function generateMessage(name){
